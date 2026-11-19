@@ -9,7 +9,7 @@ const projects = await getProjects();
 ---
 
 <Card title={t.projects.title} description={t.projects.description}>
-  <section class="page dashed-top" aria-labelledby="page-title">
+  <section class="page" aria-labelledby="page-title">
     <h1 id="page-title" class="label">{t.projects.title}</h1>
     <ProjectGrid projects={projects} headingLevel={2} />
   </section>
@@ -19,7 +19,6 @@ const projects = await getProjects();
   .page {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding-top: 26px;
+    gap: var(--s2);
   }
 </style>

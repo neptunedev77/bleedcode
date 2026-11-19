@@ -2,10 +2,9 @@
 import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
 import Card from '../../layouts/Card.astro';
-import ProjectLogo from '../../components/ProjectLogo.astro';
+import ProjectIcon from '../../components/ProjectIcon.astro';
 import StatusBadge from '../../components/StatusBadge.astro';
 import Chips from '../../components/Chips.astro';
-import Stain from '../../components/Stain.astro';
 import { getProjects, repoUrl, prettyUrl, type Project } from '../../lib/projects';
 import { useStrings } from '../../i18n';
 
@@ -25,21 +24,18 @@ const { Content } = await render(project);
 ---
 
 <Card title={p.name} description={`${p.name}: ${p.tagline}`}>
-  <article class="project dashed-top" aria-labelledby="page-title">
-    <a class="back pixel" href="/projects">{t.project.back}</a>
+  <article class="project" aria-labelledby="page-title">
+    <a class="link back" href="/projects">{t.project.back}</a>
 
     <div class="intro">
-      <div class="logo px-border">
-        <Stain kind="corner" scale={3} top="-4px" left="-4px" />
-        <ProjectLogo name={p.name} monogram={p.monogram} logo={p.logo} live={p.status === 'live'} />
-      </div>
+      <ProjectIcon icon={p.icon} logo={p.logo} />
       <div class="heading">
         <div class="title">
           <h1 id="page-title">{p.name}</h1>
           <StatusBadge status={p.status} />
-          <span class="kind pixel">{t.project.kind[p.kind]}</span>
         </div>
         <p class="tagline">{p.tagline}</p>
+        <p class="kind">{t.project.kind[p.kind]}</p>
       </div>
     </div>
 
@@ -48,25 +44,25 @@ const { Content } = await render(project);
     </div>
 
     <section aria-labelledby="stack-heading">
-      <h2 id="stack-heading" class="sub pixel">{t.project.stack}</h2>
+      <h2 id="stack-heading" class="label">{t.project.stack}</h2>
       <Chips items={p.stack} />
     </section>
 
     {
       (p.url || p.repo) && (
         <section aria-labelledby="links-heading">
-          <h2 id="links-heading" class="sub pixel">{t.project.links}</h2>
+          <h2 id="links-heading" class="label">{t.project.links}</h2>
           <ul class="links">
             {p.url && (
               <li>
-                <span class="pixel">{t.project.live}</span>
-                <a class="link-under" href={p.url}>{prettyUrl(p.url)} ↗</a>
+                <span>{t.project.live}</span>
+                <a class="link" href={p.url}>{prettyUrl(p.url)} ↗</a>
               </li>
             )}
             {p.repo && (
               <li>
-                <span class="pixel">{t.project.repo}</span>
-                <a class="link-under" href={repoUrl(p.repo)}>github.com/{p.repo} ↗</a>
+                <span>{t.project.repo}</span>
+                <a class="link" href={repoUrl(p.repo)}>github.com/{p.repo} ↗</a>
               </li>
             )}
           </ul>
@@ -77,10 +73,10 @@ const { Content } = await render(project);
     {
       p.screenshots.length > 0 && (
         <section aria-labelledby="shots-heading">
-          <h2 id="shots-heading" class="sub pixel">{t.project.screenshots}</h2>
+          <h2 id="shots-heading" class="label">{t.project.screenshots}</h2>
           <div class="shots">
             {p.screenshots.map((s) => (
-              <figure class="px-border">
+              <figure>
                 <img src={s.src} alt={s.alt} loading="lazy" decoding="async" />
               </figure>
             ))}
@@ -95,31 +91,22 @@ const { Content } = await render(project);
   .project {
     display: flex;
     flex-direction: column;
-    gap: 28px;
-    padding-top: 26px;
+    gap: var(--s4);
   }
   .back {
     align-self: flex-start;
-    font-size: 11px;
-    color: var(--muted);
-  }
-  .back:hover {
-    color: var(--link-hover);
+    font-size: var(--fs-sm);
   }
   .intro {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 24px 28px;
-  }
-  .logo {
-    position: relative;
-    flex: none;
+    gap: var(--s3);
   }
   .heading {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--s1);
     min-width: 0;
     flex: 1 1 280px;
   }
@@ -127,46 +114,38 @@ const { Content } = await render(project);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 6px 12px;
+    gap: var(--s1) var(--s2);
   }
   h1 {
-    font-size: 40px;
+    font-size: var(--fs-xl);
     font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
     color: var(--text-strong);
     overflow-wrap: anywhere;
   }
-  .kind {
-    font-size: 11px;
-    color: var(--muted);
-  }
   .tagline {
     color: var(--text-soft);
+  }
+  .kind {
+    font-size: var(--fs-sm);
+    color: var(--muted);
   }
   .prose {
     max-width: 68ch;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    color: var(--text);
-  }
-  .prose :global(a) {
-    border-bottom: 2px solid var(--accent);
+    gap: var(--s2);
   }
   section {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-  }
-  .sub {
-    font-size: 13px;
-    color: var(--text-strong);
+    gap: var(--s2);
   }
   .links {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--s1);
     margin: 0;
     padding: 0;
     list-style: none;
@@ -175,11 +154,11 @@ const { Content } = await render(project);
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 4px 14px;
+    gap: 0 var(--s2);
   }
-  .links .pixel {
-    min-width: 110px;
-    font-size: 11px;
+  .links span {
+    min-width: 12ch;
+    font-size: var(--fs-sm);
     color: var(--muted);
   }
   .links a {
@@ -188,14 +167,19 @@ const { Content } = await render(project);
   .shots {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
-    gap: 26px;
+    gap: var(--s2);
   }
   figure {
-    margin: 0;
     background: var(--inner);
+    border: var(--border-w) solid var(--line);
   }
   figure img {
     width: 100%;
     height: auto;
+  }
+  @media (max-width: 560px) {
+    h1 {
+      font-size: var(--s4);
+    }
   }
 </style>

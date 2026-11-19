@@ -1,47 +1,36 @@
 ---
 import Card from '../layouts/Card.astro';
+import Chips from '../components/Chips.astro';
 import { site } from '../site.config';
 import { useStrings } from '../i18n';
 
 const t = useStrings();
-
-/* Content for /me. Everything marked TODO still needs real text. */
-const bio = ['TODO: short bio (two or three sentences about who you are and what you build).'];
-const education = ['TODO: degree, university, years.'];
-const focus = ['cloud', 'networking', 'sre'];
 ---
 
 <Card title={t.me.title} description={t.me.description}>
-  <article class="me dashed-top" aria-labelledby="page-title">
+  <article class="me" aria-labelledby="page-title">
     <h1 id="page-title" class="label">{t.me.title}</h1>
 
-    <p class="name">{site.author}</p>
-
-    <section aria-labelledby="bio-heading">
-      <h2 id="bio-heading" class="sub pixel">{t.me.bio}</h2>
-      {bio.map((line) => <p>{line}</p>)}
-    </section>
-
-    <section aria-labelledby="edu-heading">
-      <h2 id="edu-heading" class="sub pixel">{t.me.education}</h2>
-      <ul>{education.map((line) => <li>{line}</li>)}</ul>
-    </section>
+    <div class="who">
+      <p class="name">{site.author}</p>
+      <p class="lead">{site.intro}</p>
+    </div>
 
     <section aria-labelledby="focus-heading">
-      <h2 id="focus-heading" class="sub pixel">{t.me.focus}</h2>
-      <ul class="chips">{focus.map((item) => <li>{item}</li>)}</ul>
+      <h2 id="focus-heading" class="label">{t.me.focus}</h2>
+      <Chips items={site.focus} />
     </section>
 
     <section aria-labelledby="contact-heading">
-      <h2 id="contact-heading" class="sub pixel">{t.me.contact}</h2>
+      <h2 id="contact-heading" class="label">{t.me.contact}</h2>
       <ul class="contact">
         <li>
-          <span class="pixel">email</span>
-          <a class="link-under" href={`mailto:${site.email}`}>{site.email}</a>
+          <span>email</span>
+          <a class="link" href={`mailto:${site.email}`}>{site.email}</a>
         </li>
         <li>
-          <span class="pixel">github</span>
-          <a class="link-under" href={site.github}>github.com/{site.githubUser} ↗</a>
+          <span>github</span>
+          <a class="link" href={site.github}>github.com/{site.githubUser} ↗</a>
         </li>
       </ul>
     </section>
@@ -52,53 +41,44 @@ const focus = ['cloud', 'networking', 'sre'];
   .me {
     display: flex;
     flex-direction: column;
-    gap: 26px;
-    padding-top: 26px;
-  }
-  .me > * {
+    gap: var(--s4);
     max-width: 68ch;
   }
+  .who {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s1);
+  }
   .name {
-    font-size: 24px;
+    font-size: var(--fs-lg);
     font-weight: 700;
     color: var(--text-strong);
+  }
+  .lead {
+    color: var(--text-soft);
   }
   section {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: var(--s2);
   }
-  .sub {
-    font-size: 13px;
-    color: var(--text-strong);
-  }
-  ul {
+  .contact {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s1);
     margin: 0;
     padding: 0;
     list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .chips {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .chips li {
-    font-size: 12px;
-    padding: 1px 7px;
-    background: var(--chip);
-    color: var(--text-soft);
   }
   .contact li {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 4px 14px;
+    gap: 0 var(--s2);
   }
-  .contact .pixel {
-    min-width: 70px;
-    font-size: 11px;
+  .contact span {
+    min-width: 8ch;
+    font-size: var(--fs-sm);
     color: var(--muted);
   }
 </style>

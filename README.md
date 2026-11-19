@@ -32,8 +32,8 @@ stack: [astro, typescript]
 kind: personal         # personal | academic
 featured: false        # the first 4 featured ones show on the home page
 order: 7               # sort order inside featured / the rest
-monogram: MA           # shown on a tile when there is no logo
-logo: /logos/myapp.svg # optional, file in public/logos/
+icon: terminal         # pixel icon from src/lib/icons.ts, used when there is no logo
+logo: /logos/myapp.svg # optional, file in public/logos/, replaces the icon
 ---
 
 Longer description for the project page.
@@ -45,12 +45,13 @@ It shows up on `/projects`, gets its own page at `/projects/myapp`, and lands in
 
 | Path | What |
 |---|---|
-| `src/site.config.ts` | Title placeholder, email, GitHub, corner captions |
+| `src/site.config.ts` | Intro sentence, name, location, email, GitHub, /me focus |
 | `src/i18n/` | UI strings (English now; add `pt.ts` for `/pt/...`) |
-| `src/styles/global.css` | Colour tokens, `.px-border` pixel border, base styles |
-| `src/layouts/Card.astro` | The one layout: card, frame stains, header, footer |
-| `src/lib/stains.ts` | Blood shape table and per-card stain placements |
-| `src/components/Mascot.astro` | The cat; takes a sprite sheet later |
+| `src/styles/global.css` | Colour, type and spacing tokens (8/16/24/32/48), base styles |
+| `src/layouts/Card.astro` | The one layout: card, header, footer, meta tags |
+| `src/lib/icons.ts` | 16×16 pixel icons for projects; add one as a text grid |
+| `src/components/Mascot.astro` | The cat, at integer scales |
+| `scripts/build-cat.py` | Regenerates the cat sprite, favicon, touch icon and OG image from `design/mockup/gato_v4.png` (`python scripts/build-cat.py`, needs Pillow) |
 
 ## Deploy (Vercel)
 

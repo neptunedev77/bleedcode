@@ -1,23 +1,19 @@
 ---
 import Card from '../layouts/Card.astro';
 import Mascot from '../components/Mascot.astro';
-import Stain from '../components/Stain.astro';
 import { useStrings } from '../i18n';
 
 const t = useStrings();
 ---
 
 <Card title={t.notFound.title} description={t.notFound.message} index={false}>
-  <section class="nf dashed-top" aria-labelledby="page-title">
+  <section class="nf" aria-labelledby="page-title">
     <div class="text">
       <h1 id="page-title" class="label">{t.notFound.title}</h1>
       <p>{t.notFound.message}</p>
-      <a class="link-under" href="/">{t.notFound.home}</a>
+      <a class="link" href="/">{t.notFound.home}</a>
     </div>
-    <div class="perch">
-      <Stain kind="puddle" scale={3} bottom="-6px" left="-22px" />
-      <Mascot scale={2} />
-    </div>
+    <Mascot class="cat" scale={3} scaleSmall={2} />
   </section>
 </Card>
 
@@ -27,25 +23,18 @@ const t = useStrings();
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-end;
-    gap: 24px;
-    padding-top: 26px;
-    /* the cat sits on the footer's dashed line */
-    margin-bottom: -34px;
+    gap: var(--s3);
+    /* the cat sits on the footer's top border */
+    margin-bottom: calc(var(--s4) * -1);
   }
   .text {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 14px;
-    padding-bottom: 26px;
+    gap: var(--s2);
+    padding-bottom: var(--s4);
   }
-  .perch {
-    position: relative;
-    margin: 0 24px 0 auto;
-  }
-  .perch :global(.mascot) {
-    position: relative;
-    z-index: 2;
-    margin-bottom: -3px;
+  .nf :global(.cat) {
+    margin: 0 var(--s3) 0 auto;
   }
 </style>

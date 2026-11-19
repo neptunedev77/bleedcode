@@ -10,10 +10,10 @@ const featured = await getFeaturedProjects(4);
 ---
 
 <Card variant="home">
-  <section class="projects dashed-top" aria-labelledby="projects-heading">
+  <section class="projects" aria-labelledby="projects-heading">
     <div class="head">
       <h2 id="projects-heading" class="label">{t.home.projects}</h2>
-      <a class="link-under" href="/projects">{t.home.viewAll(total)}</a>
+      <a class="link" href="/projects">{t.home.viewAll(total)}</a>
     </div>
     <ProjectGrid projects={featured} />
   </section>
@@ -23,13 +23,13 @@ const featured = await getFeaturedProjects(4);
   .projects {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding-top: 26px;
+    gap: var(--s2);
   }
   .head {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    gap: 12px;
+    gap: var(--s2);
+    font-size: var(--fs-sm);
   }
 </style>
