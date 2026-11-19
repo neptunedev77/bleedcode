@@ -1,5 +1,6 @@
 ---
 import { useStrings } from '../i18n';
+import Blood from './Blood.astro';
 
 interface Props {
   status: 'live' | 'wip' | 'archived';
@@ -9,10 +10,14 @@ const t = useStrings();
 const { status } = Astro.props;
 ---
 
-<span class:list={['badge', status]}>{t.status[status]}</span>
+<span class:list={['badge', status]}>
+  {t.status[status]}
+  {status === 'live' && <Blood kind="drop" scale={2} class="drop" />}
+</span>
 
 <style>
   .badge {
+    position: relative;
     flex: none;
     padding: 0 var(--s1);
     font-size: var(--fs-sm);
@@ -25,5 +30,10 @@ const { status } = Astro.props;
     background: var(--accent);
     border-color: var(--accent);
     color: var(--on-accent);
+  }
+  /* a tiny drop hanging from the chip's bottom edge */
+  .live :global(.drop) {
+    top: 100%;
+    right: 6px;
   }
 </style>

@@ -1,34 +1,39 @@
 ---
-/** "bleedcode" in the pixel font, with "code" in the accent colour. The only pixel-font text. */
-interface Props {
-  size?: 'lg' | 'sm';
-}
-
-const { size = 'lg' } = Astro.props;
+/**
+ * "bleedcode" in the pixel font, with "code" in the accent colour.
+ * One fixed size on every page. A pixel drip hangs from the card's
+ * top border above "code" (see SiteHeader for the offset it relies on).
+ */
+import Blood from './Blood.astro';
 ---
 
-<span class:list={['wordmark', size]}>bleed<span class="code">code</span></span>
+<span class="wordmark">bleed<span class="code"><Blood kind="drip" scale={3} scaleSmall={2} class="drip" />code</span></span>
 
 <style>
   .wordmark {
+    display: block;
     font-family: var(--font-wordmark);
+    font-size: var(--s4);
     font-weight: 400;
     line-height: 1;
     color: var(--text-strong);
     white-space: nowrap;
   }
-  .lg {
-    font-size: var(--s5);
-  }
-  .sm {
-    font-size: var(--s3);
-  }
   .code {
+    position: relative;
+    display: inline-block;
     color: var(--accent);
   }
+  /* From the top of "code" up to the card's top border:
+     header offset (--logo-offset) + card padding + the border itself. */
+  .code :global(.drip) {
+    left: 0.6em;
+    top: calc(-1 * (var(--logo-offset, 4px) + var(--card-pad) + var(--border-w)));
+  }
+  /* Narrow phones: smaller, but still the same on every page. */
   @media (max-width: 400px) {
-    .lg {
-      font-size: var(--s4);
+    .wordmark {
+      font-size: var(--s3);
     }
   }
 </style>

@@ -1,25 +1,61 @@
 ---
 import Card from '../layouts/Card.astro';
 import ProjectGrid from '../components/ProjectGrid.astro';
-import { getProjects, getFeaturedProjects } from '../lib/projects';
+import Mascot from '../components/Mascot.astro';
+import Blood from '../components/Blood.astro';
+import { site } from '../site.config';
+import { getFeaturedProjects } from '../lib/projects';
 import { useStrings } from '../i18n';
 
 const t = useStrings();
-const total = (await getProjects()).length;
 const featured = await getFeaturedProjects(4);
 ---
 
-<Card variant="home">
+<Card>
+  <section class="hero" aria-labelledby="hero-title">
+    <h1 id="hero-title" class="lead">{site.tagline}</h1>
+    <div class="perch">
+      <Blood kind="puddle" scale={2} class="puddle" />
+      <Mascot />
+    </div>
+  </section>
+
   <section class="projects" aria-labelledby="projects-heading">
     <div class="head">
       <h2 id="projects-heading" class="label">{t.home.projects}</h2>
-      <a class="link" href="/projects">{t.home.viewAll(total)}</a>
+      <a class="link" href="/projects">{t.home.viewAll}</a>
     </div>
     <ProjectGrid projects={featured} />
   </section>
 </Card>
 
 <style>
+  /* the cat sits on the hero's bottom border */
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--s3);
+    border-bottom: var(--border-w) solid var(--line);
+  }
+  .lead {
+    padding-bottom: var(--s4);
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text-strong);
+  }
+  .perch {
+    position: relative;
+    margin: 0 var(--s3) 0 auto;
+  }
+  /* a small pool on the line, under the cat's raised paw */
+  .perch :global(.puddle) {
+    bottom: calc(-1 * var(--border-w));
+    left: 8%;
+  }
+
   .projects {
     display: flex;
     flex-direction: column;
@@ -31,5 +67,11 @@ const featured = await getFeaturedProjects(4);
     align-items: baseline;
     gap: var(--s2);
     font-size: var(--fs-sm);
+  }
+
+  @media (max-width: 560px) {
+    .lead {
+      padding-bottom: 0;
+    }
   }
 </style>

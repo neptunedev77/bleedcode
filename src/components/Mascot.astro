@@ -14,6 +14,8 @@ interface Props {
   /** Pixel multiple below 560px. */
   scaleSmall?: 2 | 3 | 4;
   alt?: string;
+  /** Sprite URL; defaults to the generated cat. Swap here when the new art lands. */
+  src?: string;
   class?: string;
 }
 
@@ -21,12 +23,12 @@ const SPRITE_W = 38;
 const SPRITE_H = 43;
 
 const t = useStrings();
-const { scale = 4, scaleSmall = 3, alt = t.mascot.alt, class: className } = Astro.props;
+const { scale = 4, scaleSmall = 3, alt = t.mascot.alt, src = '/mascot/gato.png', class: className } = Astro.props;
 ---
 
 <img
   class:list={['mascot', className]}
-  src="/mascot/gato.png"
+  src={src}
   width={SPRITE_W * scale}
   height={SPRITE_H * scale}
   alt={alt}

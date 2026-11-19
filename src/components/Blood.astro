@@ -1,0 +1,77 @@
+---
+/**
+ * The three pixel-art blood details, flat in the wordmark red (no highlights, no shadows):
+ *   drip   – hangs from the card's top border, above "code"
+ *   puddle – on the divider, next to the cat
+ *   drop   – hangs from the live chip
+ * Decorative only: hidden from assistive tech and ignores the pointer.
+ * Position it with `class` + scoped CSS in the parent (it is absolutely positioned).
+ */
+interface Props {
+  kind: 'drip' | 'puddle' | 'drop';
+  /** Pixel size on wide screens and below 560px (integers keep it crisp). */
+  scale?: number;
+  scaleSmall?: number;
+  class?: string;
+}
+
+const shapes = {
+  drip: ['#####', '.###.', '.###.', '..#..', '..#..', '.###.', '.###.', '..#..'],
+  puddle: ['...######....', '.###########.', '#############'],
+  drop: ['##', '.#', '##'],
+} as const;
+
+const { kind, scale = 3, scaleSmall = scale, class: className } = Astro.props;
+const rows = shapes[kind];
+const w = rows[0].length;
+const h = rows.length;
+
+let d = '';
+rows.forEach((row, y) => {
+  let x = 0;
+  while (x < w) {
+    if (row[x] !== '#') {
+      x++;
+      continue;
+    }
+    const start = x;
+    while (x < w && row[x] === '#') x++;
+    d += `M${start} ${y}h${x - start}v1h-${x - start}z`;
+  }
+});
+---
+
+<svg
+  class:list={['blood', className]}
+  viewBox={`0 0 ${w} ${h}`}
+  width={w * scale}
+  height={h * scale}
+  shape-rendering="crispEdges"
+  aria-hidden="true"
+  focusable="false"
+  style={{
+    '--bw': `${w * scale}px`,
+    '--bh': `${h * scale}px`,
+    '--bw-sm': `${w * scaleSmall}px`,
+    '--bh-sm': `${h * scaleSmall}px`,
+  }}
+>
+  <path d={d}></path>
+</svg>
+
+<style>
+  .blood {
+    position: absolute;
+    width: var(--bw);
+    height: var(--bh);
+    fill: var(--accent);
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+  @media (max-width: 560px) {
+    .blood {
+      width: var(--bw-sm);
+      height: var(--bh-sm);
+    }
+  }
+</style>
