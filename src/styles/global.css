@@ -14,6 +14,7 @@
   /* lines: one thin, quiet border style everywhere */
   --frame: #34302f; /* softened cream for the outer card */
   --line: #2a2a2f; /* inner cards and dividers */
+  --line-strong: #6b6670; /* square icon buttons: 3.35:1 on the card */
   --border-w: 1px;
 
   /* red: only the "code" in the wordmark, the live chip and hover */
@@ -131,6 +132,31 @@ a {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+/* Page transitions: native cross-document view transitions (no JS).
+   The header has its own view-transition-name, so it stays put while
+   the rest of the page cross-fades. Browsers without support just navigate. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 200ms;
+  animation-timing-function: ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
 }
 
 .visually-hidden {

@@ -1,85 +1,137 @@
 ---
 /**
- * Card header. `home`: wordmark, one-line intro, nav, and the cat sitting on
- * the divider. `compact` (sub-pages): small wordmark linking home, and the nav.
+ * The one header, identical on every page: wordmark (always the same size),
+ * text nav with an active state, and square icon buttons (GitHub, contact).
+ * It keeps its place during page transitions (view-transition-name).
  */
 import { site } from '../site.config';
 import { useStrings } from '../i18n';
 import Wordmark from './Wordmark.astro';
-import Nav from './Nav.astro';
-import Mascot from './Mascot.astro';
-
-interface Props {
-  variant?: 'home' | 'compact';
-}
+import Icon from './Icon.astro';
 
 const t = useStrings();
-const { variant = 'compact' } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+const links = [
+  { href: '/', label: t.nav.home, match: (p: string) => p === '/' },
+  { href: '/projects', label: t.nav.projects, match: (p: string) => p === '/projects' || p.startsWith('/projects/') },
+  { href: '/me', label: t.nav.me, match: (p: string) => p === '/me' },
+];
 ---
 
-{
-  variant === 'home' ? (
-    <header class="header home">
-      <div class="intro">
-        <h1>
-          <Wordmark />
-        </h1>
-        <p class="lead">{site.intro}</p>
-        <Nav />
-      </div>
-      <Mascot class="cat" />
-    </header>
-  ) : (
-    <header class="header compact">
-      <a href="/" aria-label={t.nav.home}>
-        <Wordmark size="sm" />
-      </a>
-      <Nav />
-    </header>
-  )
-}
+<header class="header">
+  <a class="logo" href="/" aria-label={t.nav.logo}>
+    <Wordmark />
+  </a>
+
+  <nav aria-label={t.nav.label}>
+    <ul>
+      {
+        links.map((l) => {
+          const active = l.match(path);
+          const current = active ? (path === l.href ? 'page' : 'true') : undefined;
+          return (
+            <li>
+              <a class:list={['nav-link', { active }]} href={l.href} aria-current={current}>
+                {l.label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+
+  <div class="actions">
+    <a class="icon-btn" href={site.github} aria-label={t.nav.github}>
+      <Icon name="github" />
+    </a>
+    <a class="icon-btn" href={`mailto:${site.email}`} aria-label={t.nav.contact}>
+      <Icon name="mail" />
+    </a>
+  </div>
+</header>
 
 <style>
   .header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    border-bottom: var(--border-w) solid var(--line);
-  }
-
-  /* home: the cat's feet rest on the bottom border */
-  .home {
-    align-items: flex-end;
-    gap: var(--s3);
-  }
-  .intro {
-    display: flex;
-    flex-direction: column;
-    gap: var(--s2);
-    padding-bottom: var(--s3);
-    max-width: 46ch;
-  }
-  .lead {
-    color: var(--text-soft);
-  }
-  .home :global(.cat) {
-    margin: 0 var(--s3) 0 auto;
-  }
-
-  /* sub-pages */
-  .compact {
+    /* the wordmark (32px) is centred in a 40px row: 4px from the top.
+       The drip above "code" uses this to reach the card's border. */
+    --logo-offset: 4px;
+    view-transition-name: site-header;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: 'logo nav actions';
     align-items: center;
     gap: var(--s2) var(--s4);
     padding-bottom: var(--s3);
-  }
-  .compact > a:hover :global(.wordmark) {
-    color: var(--text-strong);
+    border-bottom: var(--border-w) solid var(--line);
   }
 
-  /* on phones the cat drops below the intro, so the intro needs no bottom space */
-  @media (max-width: 560px) {
-    .intro {
-      padding-bottom: 0;
+  .logo {
+    grid-area: logo;
+    display: flex;
+    align-items: center;
+    height: 40px;
+  }
+
+  nav {
+    grid-area: nav;
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s1) var(--s3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .nav-link {
+    color: var(--text-soft);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
+  }
+  .nav-link:hover {
+    color: var(--text-strong);
+    text-decoration-color: var(--accent);
+  }
+  .nav-link.active {
+    color: var(--text-strong);
+    text-decoration-color: var(--text-strong);
+  }
+
+  .actions {
+    grid-area: actions;
+    display: flex;
+    gap: var(--s1);
+  }
+  .icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--text-soft);
+    border: var(--border-w) solid var(--line-strong);
+  }
+  .icon-btn:hover {
+    color: var(--text-strong);
+    border-color: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    .header {
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        'logo actions'
+        'nav nav';
+    }
+  }
+  @media (max-width: 400px) {
+    .header {
+      /* 24px wordmark in a 40px row */
+      --logo-offset: 8px;
     }
   }
 </style>
