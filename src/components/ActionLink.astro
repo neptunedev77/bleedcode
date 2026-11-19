@@ -7,25 +7,30 @@ import Icon from './Icon.astro';
 
 interface Props {
   href: string;
-  label: string;
+  /** Visible text; omit for a compact icon-only button (then ariaLabel is required). */
+  label?: string;
   icon: 'external' | 'mail' | 'github';
   /** Accessible name when the visible label needs more context (must start with the label). */
   ariaLabel?: string;
   external?: boolean;
+  /** Text to copy to the clipboard on click instead of following the link (see CopyEmail). */
+  copy?: string;
   class?: string;
 }
 
-const { href, label, icon, ariaLabel, external = false, class: className } = Astro.props;
+const { href, label, icon, ariaLabel, external = false, copy, class: className } = Astro.props;
+const compact = !label;
 ---
 
 <a
-  class:list={['action', className]}
+  class:list={['action', { compact }, className]}
   href={href}
   aria-label={ariaLabel}
   target={external ? '_blank' : undefined}
   rel={external ? 'noopener' : undefined}
+  data-copy={copy}
 >
-  <span class="text">{label}</span>
+  {label && <span class="text" data-copy-text={copy ? '' : undefined}>{label}</span>}
   <span class="icon"><Icon name={icon} size={14} /></span>
 </a>
 
@@ -84,5 +89,25 @@ const { href, label, icon, ariaLabel, external = false, class: className } = Ast
   }
   .action:hover .icon {
     transform: translate(2px, -2px);
+  }
+
+  /* compact: a small square with the icon only and tighter brackets */
+  .compact {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    justify-content: center;
+    color: var(--text-soft);
+  }
+  .compact::before,
+  .compact::after {
+    width: 4px;
+    height: 4px;
+  }
+  .compact .icon {
+    color: inherit;
+  }
+  .compact:hover .icon {
+    transform: none;
   }
 </style>

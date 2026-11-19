@@ -1,0 +1,134 @@
+---
+/**
+ * Heading + quick status filters (all · live · wip) + project grid.
+ * The filters are plain radio buttons; the hiding is pure CSS (:has), so it
+ * works without JavaScript. Only statuses that exist in the list are offered.
+ */
+import type { Project } from '../lib/projects';
+import { useStrings } from '../i18n';
+import ProjectGrid from './ProjectGrid.astro';
+
+interface Props {
+  projects: Project[];
+  title: string;
+  /** h1 on /projects, h2 on the home page. */
+  as?: 'h1' | 'h2';
+  /** Optional "all projects →" link on the right. */
+  more?: { href: string; label: string };
+  /** Unique per page, for the radio group. */
+  id?: string;
+}
+
+const t = useStrings();
+const { projects, title, as: Heading = 'h2', more, id = 'projects' } = Astro.props;
+const order = ['live', 'wip', 'archived'] as const;
+const statuses = order.filter((s) => projects.some((p) => p.data.status === s));
+const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => ({ value: s, label: t.status[s] }))];
+---
+
+<section class="browser" aria-labelledby={`${id}-title`}>
+  <div class="head">
+    <div class="title-row">
+      <Heading id={`${id}-title`} class="label">{title}</Heading>
+      {
+        statuses.length > 1 && (
+          <fieldset class="filters">
+            <legend class="visually-hidden">{t.filters.legend}</legend>
+            {filters.map((f, i) => (
+              <>
+                {i > 0 && (
+                  <span class="sep" aria-hidden="true">
+                    ·
+                  </span>
+                )}
+                <input
+                  class="visually-hidden"
+                  type="radio"
+                  name={`${id}-filter`}
+                  id={`${id}-f-${f.value}`}
+                  value={f.value}
+                  checked={f.value === 'all'}
+                />
+                <label for={`${id}-f-${f.value}`}>{f.label}</label>
+              </>
+            ))}
+          </fieldset>
+        )
+      }
+    </div>
+    {
+      more && (
+        <a class="link more" href={more.href}>
+          {more.label}
+        </a>
+      )
+    }
+  </div>
+  <ProjectGrid projects={projects} headingLevel={Heading === 'h1' ? 2 : 3} />
+</section>
+
+<style>
+  .browser {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s2);
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s1) var(--s2);
+  }
+  .title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s1) var(--s3);
+  }
+  .more {
+    font-size: var(--fs-sm);
+  }
+
+  .filters {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s1);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: var(--fs-sm);
+  }
+  .sep {
+    color: var(--dim);
+  }
+  label {
+    cursor: pointer;
+    color: var(--dim);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+    transition:
+      color var(--t-fast) var(--ease),
+      text-decoration-color var(--t-fast) var(--ease);
+  }
+  label:hover {
+    color: var(--text-strong);
+  }
+  input:checked + label {
+    color: var(--text-strong);
+    text-decoration-color: var(--accent);
+  }
+  input:focus-visible + label {
+    outline: 2px solid var(--text-strong);
+    outline-offset: 3px;
+  }
+
+  /* the filtering itself */
+  .browser:has(input[value='live']:checked) :global(.grid > li:not([data-status='live'])),
+  .browser:has(input[value='wip']:checked) :global(.grid > li:not([data-status='wip'])),
+  .browser:has(input[value='archived']:checked) :global(.grid > li:not([data-status='archived'])) {
+    display: none;
+  }
+</style>

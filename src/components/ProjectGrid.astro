@@ -13,7 +13,7 @@ const { projects, headingLevel = 3 } = Astro.props;
 <ul class="grid">
   {
     projects.map((project) => (
-      <li>
+      <li data-status={project.data.status}>
         <ProjectCard project={project} headingLevel={headingLevel} />
       </li>
     ))
