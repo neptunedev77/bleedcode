@@ -43,6 +43,19 @@ const { Content } = await render(project);
       <Content />
     </div>
 
+    {
+      p.features.length > 0 && (
+        <section aria-labelledby="features-heading">
+          <h2 id="features-heading" class="label">{t.project.features}</h2>
+          <ul class="features">
+            {p.features.map((f) => (
+              <li>{f}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
     <section aria-labelledby="stack-heading">
       <h2 id="stack-heading" class="label">{t.project.stack}</h2>
       <Chips items={p.stack} />
@@ -70,10 +83,10 @@ const { Content } = await render(project);
       )
     }
 
-    {
-      p.screenshots.length > 0 && (
-        <section aria-labelledby="shots-heading">
-          <h2 id="shots-heading" class="label">{t.project.screenshots}</h2>
+    <section aria-labelledby="shots-heading">
+      <h2 id="shots-heading" class="label">{t.project.screenshots}</h2>
+      {
+        p.screenshots.length > 0 ? (
           <div class="shots">
             {p.screenshots.map((s) => (
               <figure>
@@ -81,9 +94,11 @@ const { Content } = await render(project);
               </figure>
             ))}
           </div>
-        </section>
-      )
-    }
+        ) : (
+          <p class="no-shots">{t.project.noScreenshots}</p>
+        )
+      }
+    </section>
   </article>
 </Card>
 
@@ -163,6 +178,40 @@ const { Content } = await render(project);
   }
   .links a {
     overflow-wrap: anywhere;
+  }
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: var(--s1) var(--s3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-width: 90ch;
+  }
+  .features li {
+    position: relative;
+    padding-left: var(--s3);
+    color: var(--text-soft);
+  }
+  /* a red pixel as the bullet */
+  .features li::before {
+    content: '';
+    position: absolute;
+    top: 0.55em;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+  }
+  .no-shots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 160px;
+    padding: var(--s3);
+    font-size: var(--fs-sm);
+    color: var(--dim);
+    border: var(--border-w) dashed var(--line-strong);
   }
   .shots {
     display: grid;

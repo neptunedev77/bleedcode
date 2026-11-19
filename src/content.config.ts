@@ -22,6 +22,8 @@ const projects = defineCollection({
     icon: z.enum(iconNames),
     /** Public path to a square logo, e.g. /logos/meium.svg */
     logo: z.string().optional(),
+    /** 3–4 short points for the project page. */
+    features: z.array(z.string()).max(4).default([]),
     /** Optional screenshots for the detail page (public paths). */
     screenshots: z.array(z.object({ src: z.string(), alt: z.string() })).default([]),
   }),
