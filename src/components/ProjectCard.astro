@@ -4,7 +4,7 @@
  * whole card. Live projects also get a "visit" button in the title row
  * (a sibling link, never nested in the main one) and a splash of blood.
  */
-import type { Project } from '../lib/projects';
+import { repoUrl, type Project } from '../lib/projects';
 import { useStrings } from '../i18n';
 import ProjectIcon from './ProjectIcon.astro';
 import StatusBadge from './StatusBadge.astro';
@@ -22,10 +22,11 @@ const { project, headingLevel = 3 } = Astro.props;
 const p = project.data;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
 const live = p.status === 'live' && p.url ? p.url : undefined;
+const repo = !live && p.repo ? repoUrl(p.repo) : undefined;
 ---
 
 <article class:list={['card', { live }]}>
-  {live && <Blood kind="corner" scale={3} bottom="-5px" right="-5px" flip="xy" />}
+  {live && <Blood kind="corner" scale={3} bottom="-1px" right="-1px" flip="xy" />}
   <ProjectIcon icon={p.icon} logo={p.logo} />
   <div class="body">
     <div class="title">
@@ -34,6 +35,7 @@ const live = p.status === 'live' && p.url ? p.url : undefined;
       </Heading>
       <StatusBadge status={p.status} />
       {live && <ActionLink class="visit" href={live} label="visit" icon="external" ariaLabel={t.projects.openLive(p.name)} external />}
+      {repo && <ActionLink class="visit" href={repo} icon="github" ariaLabel={t.projects.openRepo(p.name)} external />}
     </div>
     <p class="tagline">{p.tagline}</p>
     <Chips items={p.stack} max={2} />

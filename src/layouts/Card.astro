@@ -4,6 +4,8 @@
  */
 import '@fontsource/ibm-plex-mono/500.css';
 import '@fontsource/ibm-plex-mono/700.css';
+import plex500 from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2?url';
+import plex700 from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-700-normal.woff2?url';
 import '../styles/global.css';
 
 import { site } from '../site.config';
@@ -11,6 +13,7 @@ import { defaultLocale } from '../i18n';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import Blood from '../components/Blood.astro';
+import CopyEmail from '../components/CopyEmail.astro';
 
 interface Props {
   /** Page title; the site name is appended. Omit on the home page. */
@@ -41,6 +44,13 @@ const ogImage = new URL('/og.png', base).href;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
+    <!-- load the two text weights up front so text doesn't swap fonts on load -->
+    <link rel="preload" href={plex500} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={plex700} as="font" type="font/woff2" crossorigin />
+    <!-- prerender same-site pages on hover/press so navigation is instant (Chromium; ignored elsewhere) -->
+    <script is:inline type="speculationrules">
+      { "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }] }
+    </script>
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />
@@ -57,7 +67,7 @@ const ogImage = new URL('/og.png', base).href;
   <body>
     <div class="page">
       <div class="card">
-        <Blood kind="corner" scale={5} scaleSmall={3} top="-6px" left="-6px" />
+        <Blood kind="corner" scale={5} scaleSmall={3} top="-1px" left="-1px" />
         <Blood kind="smear" scale={4} scaleSmall={3} bottom="-7px" right="14%" />
         <SiteHeader />
         <main id="main">
@@ -66,6 +76,7 @@ const ogImage = new URL('/og.png', base).href;
         <SiteFooter />
       </div>
     </div>
+    <CopyEmail />
   </body>
 </html>
 
