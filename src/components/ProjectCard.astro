@@ -1,15 +1,16 @@
 ---
 /**
  * Project card. The project name is the main link and is stretched over the
- * whole card; live projects also get a separate external-link button in the
- * top-right corner (a sibling link, never nested inside the main one).
+ * whole card. Live projects also get a "visit" button in the title row
+ * (a sibling link, never nested in the main one) and a splash of blood.
  */
 import type { Project } from '../lib/projects';
 import { useStrings } from '../i18n';
 import ProjectIcon from './ProjectIcon.astro';
 import StatusBadge from './StatusBadge.astro';
 import Chips from './Chips.astro';
-import Icon from './Icon.astro';
+import ActionLink from './ActionLink.astro';
+import Blood from './Blood.astro';
 
 interface Props {
   project: Project;
@@ -20,10 +21,11 @@ const t = useStrings();
 const { project, headingLevel = 3 } = Astro.props;
 const p = project.data;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
-const external = p.status === 'live' && p.url ? p.url : undefined;
+const live = p.status === 'live' && p.url ? p.url : undefined;
 ---
 
-<article class:list={['card', { 'has-ext': external }]}>
+<article class:list={['card', { live }]}>
+  {live && <Blood kind="corner" scale={3} bottom="-5px" right="-5px" flip="xy" />}
   <ProjectIcon icon={p.icon} logo={p.logo} />
   <div class="body">
     <div class="title">
@@ -31,17 +33,11 @@ const external = p.status === 'live' && p.url ? p.url : undefined;
         <a class="main" href={`/projects/${p.slug}`}>{p.name}</a>
       </Heading>
       <StatusBadge status={p.status} />
+      {live && <ActionLink class="visit" href={live} label="visit" icon="external" ariaLabel={t.projects.openLive(p.name)} external />}
     </div>
     <p class="tagline">{p.tagline}</p>
     <Chips items={p.stack} max={2} />
   </div>
-  {
-    external && (
-      <a class="ext" href={external} target="_blank" rel="noopener" aria-label={t.projects.openLive(p.name)}>
-        <Icon name="external" size={16} />
-      </a>
-    )
-  }
 </article>
 
 <style>
@@ -54,9 +50,13 @@ const external = p.status === 'live' && p.url ? p.url : undefined;
     padding: var(--s2);
     background: var(--inner);
     border: var(--border-w) solid var(--line);
+    transition:
+      border-color var(--t-fast) var(--ease),
+      background-color var(--t-fast) var(--ease);
   }
   .card:has(.main:hover) {
     border-color: var(--accent);
+    background: color-mix(in srgb, var(--inner), white 2%);
   }
   .card:has(.main:focus-visible) {
     outline: 2px solid var(--text-strong);
@@ -80,15 +80,14 @@ const external = p.status === 'live' && p.url ? p.url : undefined;
     flex-direction: column;
     gap: var(--s1);
   }
-  .has-ext .title {
-    /* room for the 32px button */
-    padding-right: var(--s5);
-  }
   .title {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--s1) var(--s2);
+  }
+  .title :global(.visit) {
+    margin-left: auto;
   }
   .name {
     font-size: var(--fs-md);
@@ -99,24 +98,5 @@ const external = p.status === 'live' && p.url ? p.url : undefined;
   .tagline {
     font-size: var(--fs-sm);
     color: var(--text-soft);
-  }
-
-  .ext {
-    position: absolute;
-    top: var(--s2);
-    right: var(--s2);
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    color: var(--text-soft);
-    background: var(--inner);
-    border: var(--border-w) solid var(--line-strong);
-  }
-  .ext:hover {
-    color: var(--text-strong);
-    border-color: var(--accent);
   }
 </style>
