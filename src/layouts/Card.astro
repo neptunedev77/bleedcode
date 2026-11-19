@@ -1,0 +1,102 @@
+---
+/**
+ * The one layout: page shell, centered card with its frame stains,
+ * header, page content and footer.
+ */
+import '@fontsource/ibm-plex-mono/500.css';
+import '@fontsource/ibm-plex-mono/600.css';
+import '@fontsource/ibm-plex-mono/700.css';
+import '@fontsource/silkscreen/400.css';
+import '../styles/global.css';
+
+import { site } from '../site.config';
+import { defaultLocale } from '../i18n';
+import { frameStains } from '../lib/stains';
+import Stain from '../components/Stain.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props {
+  /** Page title; the site name is appended. Omit on the home page. */
+  title?: string;
+  description?: string;
+  variant?: 'home' | 'compact';
+  /** Set false for pages that should not be indexed (404). */
+  index?: boolean;
+}
+
+const { title, description = site.description, variant = 'compact', index = true } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · independent web studio`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+---
+
+<!doctype html>
+<html lang={defaultLocale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.author} />
+    <meta name="theme-color" content="#0b0b0d" />
+    <meta name="color-scheme" content="dark" />
+    {!index && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="generator" content={Astro.generator} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="en_GB" />
+    <meta name="twitter:card" content="summary" />
+  </head>
+  <body>
+    <div class="page">
+      <div class="card px-border">
+        {frameStains.map((s) => <Stain {...s} />)}
+        <SiteHeader variant={variant} />
+        <main id="main">
+          <slot />
+        </main>
+        <SiteFooter />
+      </div>
+    </div>
+  </body>
+</html>
+
+<style>
+  .page {
+    min-height: 100vh;
+    padding: 64px 20px 56px;
+  }
+  .card {
+    --px-w: 4px;
+    --px-c: var(--border-light);
+    --px-drop: 12px 12px 0 0 var(--shadow);
+    position: relative;
+    max-width: var(--card-max);
+    margin: 0 auto;
+    padding: 26px var(--card-pad-x) 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+    background: var(--card);
+  }
+  main {
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+  }
+  @media (max-width: 560px) {
+    .page {
+      padding: 32px 14px 40px;
+    }
+    .card {
+      --px-drop: 6px 6px 0 0 var(--shadow);
+    }
+  }
+</style>

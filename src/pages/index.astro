@@ -1,0 +1,35 @@
+---
+import Card from '../layouts/Card.astro';
+import ProjectGrid from '../components/ProjectGrid.astro';
+import { getProjects, getFeaturedProjects } from '../lib/projects';
+import { useStrings } from '../i18n';
+
+const t = useStrings();
+const total = (await getProjects()).length;
+const featured = await getFeaturedProjects(4);
+---
+
+<Card variant="home">
+  <section class="projects dashed-top" aria-labelledby="projects-heading">
+    <div class="head">
+      <h2 id="projects-heading" class="label">{t.home.projects}</h2>
+      <a class="link-under" href="/projects">{t.home.viewAll(total)}</a>
+    </div>
+    <ProjectGrid projects={featured} />
+  </section>
+</Card>
+
+<style>
+  .projects {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 26px;
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+</style>
