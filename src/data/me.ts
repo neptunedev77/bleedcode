@@ -1,16 +1,31 @@
 /** Content for /me. Edit here; the page only lays it out. */
 
+export const hello = 'Developer based in Braga, Portugal.';
+
 export const about = [
-  "I like building apps and, more and more, understanding what's underneath them: cloud, networking, and how large-scale infrastructure really works.",
-  'Away from the keyboard: metal, guitars, photography and cats.',
+  "Currently an MSc student in Informatics Engineering at UMinho, where I enjoy building web apps, automation and everyday tools, while also exploring the cloud and networking layers that keep large-scale systems alive.",
+  "Away from the terminal, you'll usually find me listening to metal, playing guitar, shooting photos, or stopping to pet random cats.",
 ];
 
-export const focus = ['cloud', 'networking', 'infrastructure'];
-export const offline = ['metal', 'guitars', 'photography', 'cats'];
+/** From the GitHub profile's tech stack. */
+export const focus = [
+  'software development',
+  'web apps',
+  'cloud infrastructure',
+  'containers & kubernetes',
+  'infrastructure as code',
+  'ci/cd',
+  'networking',
+  'linux',
+  'automation',
+  'sre',
+];
+export const offline = ['metal', 'guitar', 'photography', 'cats'];
 
 export interface EducationEntry {
   degree: string;
-  level: string;
+  /** Small tag after the degree, e.g. "High School". */
+  level?: string;
   school: string;
   place: string;
   start: number;
@@ -21,23 +36,21 @@ export interface EducationEntry {
 /** Most recent first. */
 export const education: EducationEntry[] = [
   {
-    degree: 'Informatics Engineering',
-    level: 'MSc',
+    degree: 'M.Sc. in Informatics Engineering (Computer Science & Engineering)',
     school: 'University of Minho',
     place: 'Braga',
     start: 2026,
   },
   {
-    degree: 'Informatics Engineering',
-    level: 'BSc',
+    degree: 'B.Sc. in Informatics Engineering (Computer Science & Engineering)',
     school: 'UTAD',
     place: 'Vila Real',
     start: 2022,
     end: 2025,
   },
   {
-    degree: 'Applied Web Engineering',
-    level: 'Secondary education',
+    degree: 'Applied Web Informatics (EQF Level 4)',
+    level: 'High School',
     school: 'Colégio de S. Gonçalo',
     place: 'Amarante',
     start: 2020,
