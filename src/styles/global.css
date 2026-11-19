@@ -1,7 +1,7 @@
 /* ------------------------------------------------------------------
    bleedcode: design tokens and base styles.
-   Every colour used anywhere lives here. A light theme only needs a
-   `:root[data-theme='light'] { ... }` block that overrides these.
+   Every colour, size and space lives here. A light theme only needs a
+   `:root[data-theme='light'] { ... }` block that overrides the colours.
    ------------------------------------------------------------------ */
 
 :root {
@@ -9,49 +9,60 @@
   --page: #0b0b0d;
   --card: #121215;
   --inner: #17171a;
-  --tile: #1f1f23;
-  --monogram: #2e2e33;
-  --chip: #26262a;
-  --shadow: #050506;
+  --tile: #1d1d21;
 
-  /* blood */
-  --accent: #b8304a; /* cherry red: large text, icons, fills */
-  --blood: #8e1b2b; /* dried blood */
-  --blood-dark: #5c0f1a; /* old blood */
+  /* lines: one thin, quiet border style everywhere */
+  --frame: #34302f; /* softened cream for the outer card */
+  --line: #2a2a2f; /* inner cards and dividers */
+  --border-w: 1px;
 
-  /* lines */
-  --border-light: #e9dcd9; /* main card frame */
-  --border: #4a474f; /* inner cards */
-  --border-tile: #5a5660; /* nav tiles */
-  --divider: #2a2a2f;
-
-  /* text */
-  --text: #ece8e3;
-  --text-strong: #f4f0ea;
-  --text-soft: #c3bfba;
-  --muted: #a8a3a0;
+  /* red: only the "code" in the wordmark, the live chip and hover */
+  --accent: #b8304a;
   --on-accent: #fff4f5;
-  --link-hover: #ffffff;
 
-  /* type */
-  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
-  --font-pixel: 'Silkscreen', var(--font-mono);
+  /* text (contrast on --card / --inner / --tile; AA needs 4.5:1) */
+  --text-strong: #f4f0ea; /* 16.5 / 15.8 / 14.8 */
+  --text: #ece8e3; /* 15.3 / 14.7 / 13.8 */
+  --text-soft: #c3bfba; /* 10.2 /  9.8 /  9.2 */
+  --muted: #a8a3a0; /*  7.5 /  7.2 /  6.7 */
+  /* --accent is 3.2:1 on --card: large text (>=24px) and non-text only.
+     The live chip (--on-accent on --accent) is 5.5:1. */
+
+  /* pixel icons */
+  --icon: #c3bfba;
+  --icon-2: #6b6670;
+
+  /* type: one text font, the pixel font only in the wordmark */
+  --font: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  --font-wordmark: 'Silkscreen', var(--font);
+  --fs-sm: 14px; /* minimum size for any text */
+  --fs-md: 16px;
+  --fs-lg: 24px;
+  --fs-xl: 40px;
+
+  /* spacing scale: use only these */
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+  --s5: 48px;
 
   /* layout */
   --card-max: 980px;
-  --card-pad-x: 36px;
+  --card-pad: var(--s4);
 
   color-scheme: dark;
 }
 
-/* Light theme hook (not in v1). Override the tokens above, e.g.:
-:root[data-theme='light'] {
-  --page: #f1ece6;
-  --card: #fbf8f4;
-  ...
-  color-scheme: light;
-}
+/* Light theme hook (not in v1), e.g.:
+:root[data-theme='light'] { --page: #f1ece6; --card: #fbf8f4; ... color-scheme: light; }
 */
+
+@media (max-width: 560px) {
+  :root {
+    --card-pad: var(--s2);
+  }
+}
 
 *,
 *::before,
@@ -69,31 +80,18 @@ body {
   margin: 0;
   background: var(--page);
   color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 15px;
+  font-family: var(--font);
+  font-size: var(--fs-md);
   font-weight: 500;
-  line-height: 1.55;
+  line-height: 1.5;
   overflow-x: clip;
-}
-
-a {
-  color: var(--text);
-  text-decoration: none;
-}
-
-a:hover {
-  color: var(--link-hover);
-}
-
-:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 4px;
 }
 
 h1,
 h2,
 h3,
-p {
+p,
+figure {
   margin: 0;
 }
 
@@ -102,57 +100,37 @@ svg {
   display: block;
 }
 
-/* Pixel border: four hard shadows, so the corners come out notched.
-   Tune with --px-w (thickness), --px-c (colour) and --px-drop (extra shadow).
-   The knobs do not inherit, so a nested .px-border never picks up its parent's. */
-@property --px-w {
-  syntax: '*';
-  inherits: false;
-}
-@property --px-c {
-  syntax: '*';
-  inherits: false;
-}
-@property --px-drop {
-  syntax: '*';
-  inherits: false;
+/* Links: one hover and one focus style for the whole site. */
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-.px-border {
-  --_w: var(--px-w, 3px);
-  --_c: var(--px-c, var(--border));
-  box-shadow:
-    0 calc(var(--_w) * -1) 0 0 var(--_c),
-    0 var(--_w) 0 0 var(--_c),
-    calc(var(--_w) * -1) 0 0 0 var(--_c),
-    var(--_w) 0 0 0 var(--_c),
-    var(--px-drop, 0 0 0 0 transparent);
-}
-
-/* Silkscreen is only for small captions, labels and badges. */
-.pixel {
-  font-family: var(--font-pixel);
-  font-weight: 400;
-}
-
-.dashed-top {
-  border-top: 3px dashed var(--divider);
-}
-
-/* Section label, e.g. "projects" */
-.label {
-  font-family: var(--font-pixel);
-  font-size: 18px;
-  font-weight: 400;
-  color: var(--text-strong);
-}
-
-/* Underlined text link (e.g. "view all 6 →") */
-.link-under {
-  font-size: 13px;
-  font-weight: 600;
+.link {
   color: var(--text);
-  border-bottom: 2px solid var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.link:hover {
+  color: var(--text-strong);
+  text-decoration-color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--text-strong);
+  outline-offset: 3px;
+}
+
+/* Small uppercase label, e.g. section headings. */
+.label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 .visually-hidden {
@@ -165,10 +143,4 @@ svg {
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
-}
-
-@media (max-width: 560px) {
-  :root {
-    --card-pad-x: 18px;
-  }
 }
