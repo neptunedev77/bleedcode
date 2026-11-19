@@ -1,0 +1,38 @@
+---
+import type { Project } from '../lib/projects';
+import ProjectCard from './ProjectCard.astro';
+
+interface Props {
+  projects: Project[];
+  headingLevel?: 2 | 3;
+}
+
+const { projects, headingLevel = 3 } = Astro.props;
+---
+
+<ul class="grid">
+  {
+    projects.map((project, i) => (
+      <li>
+        <ProjectCard project={project} index={i} headingLevel={headingLevel} />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+    gap: 26px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    display: flex;
+  }
+  li > :global(a) {
+    flex: 1;
+  }
+</style>

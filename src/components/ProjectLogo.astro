@@ -1,0 +1,56 @@
+---
+/** Square logo cell. Shows the logo if there is one, otherwise the monogram tile. */
+interface Props {
+  name: string;
+  monogram: string;
+  logo?: string | undefined;
+  /** Live projects get the accent tile, as in the mockup. */
+  live?: boolean;
+  size?: number;
+}
+
+const { name, monogram, logo, live = false, size = 120 } = Astro.props;
+const inner = Math.round(size * (64 / 120));
+---
+
+<span class="cell" style={{ '--cell': `${size}px`, '--mono': `${inner}px` }} aria-hidden="true">
+  {
+    logo ? (
+      <img src={logo} alt="" width={inner} height={inner} loading="lazy" decoding="async" data-name={name} />
+    ) : (
+      <span class:list={['mono', { live }]}>{monogram}</span>
+    )
+  }
+</span>
+
+<style>
+  .cell {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--cell);
+    height: var(--cell);
+    aspect-ratio: 1;
+    background: var(--tile);
+  }
+  .mono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--mono);
+    height: var(--mono);
+    background: var(--monogram);
+    color: var(--on-accent);
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .mono.live {
+    background: var(--accent);
+  }
+  img {
+    width: var(--mono);
+    height: var(--mono);
+    object-fit: contain;
+  }
+</style>

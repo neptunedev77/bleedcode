@@ -1,0 +1,84 @@
+---
+/**
+ * The bleedcode cat. Renders the static sprite today; pass `sheet` to switch to
+ * an animated horizontal sprite sheet (e.g. the cat licking itself) later.
+ * Always drawn at an integer scale with pixelated rendering.
+ */
+import { useStrings } from '../i18n';
+
+interface SpriteSheet {
+  /** Public URL of a horizontal strip of equally sized frames. */
+  src: string;
+  frames: number;
+  /** Frames per second. */
+  fps?: number;
+}
+
+interface Props {
+  scale?: 1 | 2 | 3;
+  /** Decorative instances (e.g. repeated on 404) can pass an empty alt. */
+  alt?: string;
+  sheet?: SpriteSheet;
+  class?: string;
+}
+
+const FRAME_W = 48;
+const FRAME_H = 46;
+
+const t = useStrings();
+const { scale = 3, alt = t.mascot.alt, sheet, class: className } = Astro.props;
+const width = FRAME_W * scale;
+const height = FRAME_H * scale;
+const duration = sheet ? `${sheet.frames / (sheet.fps ?? 8)}s` : undefined;
+---
+
+{
+  sheet ? (
+    <span
+      class:list={['mascot', 'sheet', className]}
+      role={alt ? 'img' : undefined}
+      aria-label={alt || undefined}
+      aria-hidden={alt ? undefined : 'true'}
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+        backgroundImage: `url(${sheet.src})`,
+        backgroundSize: `${width * sheet.frames}px ${height}px`,
+        '--sheet-end': `-${width * sheet.frames}px`,
+        '--sheet-frames': sheet.frames,
+        '--sheet-duration': duration,
+      }}
+    />
+  ) : (
+    <img
+      class:list={['mascot', className]}
+      src="/mascot/gato.png"
+      width={width}
+      height={height}
+      alt={alt}
+      decoding="async"
+    />
+  )
+}
+
+<style>
+  .mascot {
+    display: block;
+    image-rendering: pixelated;
+    flex: none;
+  }
+  .sheet {
+    background-repeat: no-repeat;
+    animation: sprite var(--sheet-duration) steps(var(--sheet-frames)) infinite;
+  }
+  @keyframes sprite {
+    to {
+      background-position-x: var(--sheet-end);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sheet {
+      animation: none;
+    }
+  }
+</style>

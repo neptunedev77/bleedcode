@@ -1,0 +1,76 @@
+---
+import type { Project } from '../lib/projects';
+import { cardStains } from '../lib/stains';
+import Stain from './Stain.astro';
+import ProjectLogo from './ProjectLogo.astro';
+import StatusBadge from './StatusBadge.astro';
+import Chips from './Chips.astro';
+
+interface Props {
+  project: Project;
+  /** Position in the grid; picks a different stain for each card. */
+  index: number;
+  headingLevel?: 2 | 3;
+}
+
+const { project, index, headingLevel = 3 } = Astro.props;
+const p = project.data;
+const stains = cardStains[index % cardStains.length] ?? [];
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+---
+
+<a class="card px-border" href={`/projects/${p.slug}`}>
+  {stains.map((s) => <Stain {...s} />)}
+  <ProjectLogo name={p.name} monogram={p.monogram} logo={p.logo} live={p.status === 'live'} />
+  <div class="body">
+    <div class="title">
+      <Heading class="name">{p.name}</Heading>
+      <StatusBadge status={p.status} />
+    </div>
+    <p class="tagline">{p.tagline}</p>
+    <Chips items={p.stack} />
+  </div>
+</a>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    background: var(--inner);
+    color: var(--text);
+  }
+  .card:hover {
+    --px-c: var(--border-light);
+    color: var(--text);
+  }
+  .card > :global(.cell) {
+    border-right: 3px solid var(--border);
+  }
+  .body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 16px;
+  }
+  .title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+  }
+  .name {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.55;
+    color: var(--text-strong);
+  }
+  .tagline {
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--text-soft);
+  }
+</style>
