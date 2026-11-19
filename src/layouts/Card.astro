@@ -16,13 +16,12 @@ interface Props {
   /** Page title; the site name is appended. Omit on the home page. */
   title?: string;
   description?: string;
-  variant?: 'home' | 'compact';
   /** Set false for pages that should not be indexed (404). */
   index?: boolean;
 }
 
-const { title, description = site.intro, variant = 'compact', index = true } = Astro.props;
-const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · web apps by ${site.author}`;
+const { title, description = site.description, index = true } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : site.name;
 const base = Astro.site ?? site.url;
 const canonical = new URL(Astro.url.pathname, base).href;
 const ogImage = new URL('/og.png', base).href;
@@ -35,7 +34,6 @@ const ogImage = new URL('/og.png', base).href;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta name="author" content={site.author} />
     <meta name="theme-color" content="#0b0b0d" />
     <meta name="color-scheme" content="dark" />
     {!index && <meta name="robots" content="noindex" />}
@@ -59,7 +57,7 @@ const ogImage = new URL('/og.png', base).href;
   <body>
     <div class="page">
       <div class="card">
-        <SiteHeader variant={variant} />
+        <SiteHeader />
         <main id="main">
           <slot />
         </main>

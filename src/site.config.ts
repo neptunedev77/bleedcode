@@ -5,17 +5,15 @@
 export const site = {
   name: 'bleedcode',
   url: 'https://bleedcode.space',
-  author: 'António Sousa',
-  location: 'Braga, Portugal',
   email: 'contact@bleedcode.space',
   github: 'https://github.com/neptunedev77',
   githubUser: 'neptunedev77',
 
-  /** One-sentence introduction under the wordmark (also the default meta description). */
-  intro: "I'm António Sousa. I build small web apps in Braga, Portugal, and give each one its own subdomain.",
+  /** Hero line on the home page. */
+  tagline: 'Developer based in Braga, Portugal.',
 
-  /** Areas of interest shown on /me. */
-  focus: ['cloud', 'networking', 'sre'],
+  /** Default meta / Open Graph description. */
+  description: 'bleedcode: projects and web apps by a developer based in Braga, Portugal.',
 } as const;
 
 export type Site = typeof site;

@@ -1,6 +1,5 @@
 ---
 import Card from '../layouts/Card.astro';
-import Chips from '../components/Chips.astro';
 import { site } from '../site.config';
 import { useStrings } from '../i18n';
 
@@ -11,15 +10,9 @@ const t = useStrings();
   <article class="me" aria-labelledby="page-title">
     <h1 id="page-title" class="label">{t.me.title}</h1>
 
-    <div class="who">
-      <p class="name">{site.author}</p>
-      <p class="lead">{site.intro}</p>
+    <div class="about">
+      {t.me.about.map((line) => <p>{line}</p>)}
     </div>
-
-    <section aria-labelledby="focus-heading">
-      <h2 id="focus-heading" class="label">{t.me.focus}</h2>
-      <Chips items={site.focus} />
-    </section>
 
     <section aria-labelledby="contact-heading">
       <h2 id="contact-heading" class="label">{t.me.contact}</h2>
@@ -44,18 +37,12 @@ const t = useStrings();
     gap: var(--s4);
     max-width: 68ch;
   }
-  .who {
+  .about {
     display: flex;
     flex-direction: column;
-    gap: var(--s1);
-  }
-  .name {
-    font-size: var(--fs-lg);
-    font-weight: 700;
-    color: var(--text-strong);
-  }
-  .lead {
-    color: var(--text-soft);
+    gap: var(--s2);
+    font-size: var(--fs-md);
+    color: var(--text);
   }
   section {
     display: flex;
