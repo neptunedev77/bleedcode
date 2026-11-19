@@ -7,7 +7,7 @@ stack: [next.js, postgresql, prisma]
 kind: personal
 featured: false
 order: 5
-monogram: mi
+icon: search
 ---
 
 miaUM is a lost & found board for the University of Minho, where people can report items they have lost or found on campus.

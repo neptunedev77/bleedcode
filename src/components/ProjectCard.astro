@@ -1,76 +1,65 @@
 ---
 import type { Project } from '../lib/projects';
-import { cardStains } from '../lib/stains';
-import Stain from './Stain.astro';
-import ProjectLogo from './ProjectLogo.astro';
+import ProjectIcon from './ProjectIcon.astro';
 import StatusBadge from './StatusBadge.astro';
 import Chips from './Chips.astro';
 
 interface Props {
   project: Project;
-  /** Position in the grid; picks a different stain for each card. */
-  index: number;
   headingLevel?: 2 | 3;
 }
 
-const { project, index, headingLevel = 3 } = Astro.props;
+const { project, headingLevel = 3 } = Astro.props;
 const p = project.data;
-const stains = cardStains[index % cardStains.length] ?? [];
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
 ---
 
-<a class="card px-border" href={`/projects/${p.slug}`}>
-  {stains.map((s) => <Stain {...s} />)}
-  <ProjectLogo name={p.name} monogram={p.monogram} logo={p.logo} live={p.status === 'live'} />
+<a class="card" href={`/projects/${p.slug}`}>
+  <ProjectIcon icon={p.icon} logo={p.logo} />
   <div class="body">
     <div class="title">
       <Heading class="name">{p.name}</Heading>
       <StatusBadge status={p.status} />
     </div>
     <p class="tagline">{p.tagline}</p>
-    <Chips items={p.stack} />
+    <Chips items={p.stack} max={2} />
   </div>
 </a>
 
 <style>
   .card {
-    position: relative;
     display: flex;
-    align-items: stretch;
+    align-items: flex-start;
+    gap: var(--s2);
+    height: 100%;
+    padding: var(--s2);
     background: var(--inner);
-    color: var(--text);
+    border: var(--border-w) solid var(--line);
   }
   .card:hover {
-    --px-c: var(--border-light);
-    color: var(--text);
-  }
-  .card > :global(.cell) {
-    border-right: 3px solid var(--border);
+    border-color: var(--accent);
   }
   .body {
     flex: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 6px;
-    padding: 12px 16px;
+    gap: var(--s1);
   }
   .title {
     display: flex;
-    align-items: center;
     flex-wrap: wrap;
-    gap: 4px 10px;
+    align-items: center;
+    gap: var(--s1) var(--s2);
   }
   .name {
-    font-size: 16px;
+    font-size: var(--fs-md);
     font-weight: 700;
-    line-height: 1.55;
+    line-height: 1.5;
     color: var(--text-strong);
   }
   .tagline {
-    font-size: 14px;
-    line-height: 1.45;
+    font-size: var(--fs-sm);
     color: var(--text-soft);
   }
 </style>

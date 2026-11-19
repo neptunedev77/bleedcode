@@ -7,7 +7,7 @@ stack: [react, typescript]
 kind: personal
 featured: true
 order: 4
-monogram: rs
+icon: pick
 ---
 
 riffspace lets metal fans and guitarists put together visual profile cards.

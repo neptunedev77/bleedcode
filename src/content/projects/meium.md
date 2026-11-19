@@ -9,7 +9,7 @@ stack: [html, css, js]
 kind: academic
 featured: true
 order: 1
-monogram: mU
+icon: book
 ---
 
 meiUM is a set of interactive study notes for the MSc in Informatics Engineering, published as a website.

@@ -12,9 +12,9 @@ const { projects, headingLevel = 3 } = Astro.props;
 
 <ul class="grid">
   {
-    projects.map((project, i) => (
+    projects.map((project) => (
       <li>
-        <ProjectCard project={project} index={i} headingLevel={headingLevel} />
+        <ProjectCard project={project} headingLevel={headingLevel} />
       </li>
     ))
   }
@@ -23,16 +23,10 @@ const { projects, headingLevel = 3 } = Astro.props;
 <style>
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
-    gap: 26px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
+    gap: var(--s2);
     margin: 0;
     padding: 0;
     list-style: none;
-  }
-  li {
-    display: flex;
-  }
-  li > :global(a) {
-    flex: 1;
   }
 </style>

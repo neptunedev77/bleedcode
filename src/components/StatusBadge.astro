@@ -9,18 +9,21 @@ const t = useStrings();
 const { status } = Astro.props;
 ---
 
-<span class:list={['badge', 'pixel', status]}>{t.status[status]}</span>
+<span class:list={['badge', status]}>{t.status[status]}</span>
 
 <style>
   .badge {
     flex: none;
-    font-size: 11px;
-    line-height: 1.55;
+    padding: 0 var(--s1);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    line-height: 1.5;
     color: var(--muted);
+    border: var(--border-w) solid var(--line);
   }
   .live {
-    padding: 0 6px;
     background: var(--accent);
+    border-color: var(--accent);
     color: var(--on-accent);
   }
 </style>

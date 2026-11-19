@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { iconNames } from './lib/icons';
 
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
@@ -17,7 +18,8 @@ const projects = defineCollection({
     kind: z.enum(['personal', 'academic']),
     featured: z.boolean(),
     order: z.number().int(),
-    monogram: z.string().min(1).max(3),
+    /** Pixel icon from src/lib/icons.ts, used when there is no logo. */
+    icon: z.enum(iconNames),
     /** Public path to a square logo, e.g. /logos/meium.svg */
     logo: z.string().optional(),
     /** Optional screenshots for the detail page (public paths). */

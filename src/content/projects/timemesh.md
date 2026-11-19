@@ -7,7 +7,7 @@ stack: [next.js, supabase]
 kind: personal
 featured: true
 order: 2
-monogram: TM
+icon: calendar
 ---
 
 TimeMesh finds the time slots that a whole group has in common.

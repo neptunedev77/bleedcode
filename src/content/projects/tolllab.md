@@ -7,7 +7,7 @@ stack: [react, three.js]
 kind: personal
 featured: true
 order: 3
-monogram: TL
+icon: toll
 ---
 
 TollLab simulates the toll network of the motorways in northern Portugal.

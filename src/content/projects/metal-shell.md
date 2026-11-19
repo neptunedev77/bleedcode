@@ -8,7 +8,7 @@ stack: [python]
 kind: personal
 featured: false
 order: 6
-monogram: ms
+icon: terminal
 ---
 
 metal-shell is a collectible strategy game about metal bands that runs in the terminal.
