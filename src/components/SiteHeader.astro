@@ -54,9 +54,6 @@ const links = [
 
 <style>
   .header {
-    /* the wordmark (32px) is centred in a 40px row: 4px from the top.
-       The drip above "code" uses this to reach the card's border. */
-    --logo-offset: 4px;
     view-transition-name: site-header;
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -126,12 +123,6 @@ const links = [
       grid-template-areas:
         'logo actions'
         'nav nav';
-    }
-  }
-  @media (max-width: 400px) {
-    .header {
-      /* 24px wordmark in a 40px row */
-      --logo-offset: 8px;
     }
   }
 </style>
