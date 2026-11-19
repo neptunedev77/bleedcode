@@ -15,7 +15,8 @@ const featured = await getFeaturedProjects(4);
   <section class="hero" aria-labelledby="hero-title">
     <h1 id="hero-title" class="lead">{site.tagline}</h1>
     <div class="perch">
-      <Blood kind="puddle" scale={2} class="puddle" />
+      <Blood kind="pool" scale={3} scaleSmall={2} bottom="-4px" left="-30%" />
+      <Blood kind="specks" scale={3} scaleSmall={2} bottom="34%" left="-12%" />
       <Mascot />
     </div>
   </section>
@@ -49,11 +50,6 @@ const featured = await getFeaturedProjects(4);
   .perch {
     position: relative;
     margin: 0 var(--s3) 0 auto;
-  }
-  /* a small pool on the line, under the cat's raised paw */
-  .perch :global(.puddle) {
-    bottom: calc(-1 * var(--border-w));
-    left: 8%;
   }
 
   .projects {
