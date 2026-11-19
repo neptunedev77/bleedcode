@@ -29,6 +29,7 @@ const compact = !label;
   target={external ? '_blank' : undefined}
   rel={external ? 'noopener' : undefined}
   data-copy={copy}
+  data-trace
 >
   {label && <span class="text" data-copy-text={copy ? '' : undefined}>{label}</span>}
   <span class="icon"><Icon name={icon} size={14} /></span>
@@ -79,6 +80,8 @@ const compact = !label;
   .action:hover {
     color: var(--text-strong);
     background: var(--accent-soft);
+  }
+  :global(html:not(.has-trace)) .action:hover {
     border-color: var(--accent);
   }
   .action:hover::before {

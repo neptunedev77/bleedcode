@@ -54,6 +54,9 @@
   --s4: 32px;
   --s5: 48px;
 
+  /* a 4×4 pixel circle: a square with its corners cut */
+  --pixel-dot: polygon(25% 0, 75% 0, 75% 25%, 100% 25%, 100% 75%, 75% 75%, 75% 100%, 25% 100%, 25% 75%, 0 75%, 0 25%, 25% 25%);
+
   /* motion */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --t-fast: 180ms;
@@ -200,6 +203,62 @@ a {
   *::before,
   *::after {
     transition: none !important;
+  }
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* Border trace drawn by site.js on [data-trace] elements: a red line that
+   grows from where the pointer came in until it closes the shape. */
+[data-trace] {
+  position: relative;
+}
+.trace {
+  position: absolute;
+  inset: calc(-1 * var(--border-w));
+  width: calc(100% + 2 * var(--border-w));
+  height: calc(100% + 2 * var(--border-w));
+  overflow: visible;
+  pointer-events: none;
+  z-index: 2;
+}
+.trace rect {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 0 1;
+}
+
+/* Project filters (site.js runs the change inside a view transition).
+   During it, only the project cards animate: the page and frame don't. */
+html.filtering main,
+html.filtering .card {
+  view-transition-name: none !important;
+}
+::view-transition-group(.pcard) {
+  animation-duration: 380ms;
+  animation-timing-function: var(--ease);
+}
+::view-transition-old(.pcard):only-child {
+  animation: pcard-out 200ms var(--ease) both;
+}
+::view-transition-new(.pcard):only-child {
+  animation: pcard-in 360ms var(--ease) 90ms both;
+}
+@keyframes pcard-out {
+  to {
+    opacity: 0;
+    transform: scale(0.94);
+    filter: blur(3px);
+  }
+}
+@keyframes pcard-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+    filter: blur(3px);
   }
 }
 

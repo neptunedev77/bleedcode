@@ -43,10 +43,10 @@ const links = [
   </nav>
 
   <div class="actions">
-    <a class="icon-btn" href={site.github} aria-label={t.nav.github}>
+    <a class="icon-btn" href={site.github} aria-label={t.nav.github} data-trace>
       <Icon name="github" />
     </a>
-    <a class="icon-btn" href={`mailto:${site.email}`} aria-label={t.nav.contact} data-copy={site.email}>
+    <a class="icon-btn" href={`mailto:${site.email}`} aria-label={t.nav.contact} data-copy={site.email} data-trace>
       <Icon name="mail" />
     </a>
   </div>
@@ -114,6 +114,8 @@ const links = [
   }
   .icon-btn:hover {
     color: var(--text-strong);
+  }
+  :global(html:not(.has-trace)) .icon-btn:hover {
     border-color: var(--accent);
   }
 

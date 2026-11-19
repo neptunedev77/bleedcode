@@ -25,7 +25,7 @@ const live = p.status === 'live' && p.url ? p.url : undefined;
 const repo = !live && p.repo ? repoUrl(p.repo) : undefined;
 ---
 
-<article class:list={['card', { live }]}>
+<article class:list={['card', { live }]} data-trace>
   {live && <Blood kind="corner" scale={3} bottom="-1px" right="-1px" flip="xy" />}
   <ProjectIcon icon={p.icon} logo={p.logo} />
   <div class="body">
@@ -56,8 +56,11 @@ const repo = !live && p.repo ? repoUrl(p.repo) : undefined;
       border-color var(--t-fast) var(--ease),
       background-color var(--t-fast) var(--ease);
   }
-  .card:has(.main:hover) {
+  /* without the script, hover just turns the border red; with it, site.js draws it */
+  :global(html:not(.has-trace)) .card:has(.main:hover) {
     border-color: var(--accent);
+  }
+  .card:has(.main:hover) {
     background: color-mix(in srgb, var(--inner), white 2%);
   }
   .card:has(.main:focus-visible) {

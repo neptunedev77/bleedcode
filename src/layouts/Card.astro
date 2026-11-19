@@ -48,6 +48,7 @@ const ogImage = new URL('/og.png', base).href;
     <link rel="preload" href={plex500} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={plex700} as="font" type="font/woff2" crossorigin />
     <!-- prerender same-site pages on hover/press so navigation is instant (Chromium; ignored elsewhere) -->
+    <script is:inline src="/js/site.js" defer></script>
     <script is:inline type="speculationrules">
       { "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }] }
     </script>

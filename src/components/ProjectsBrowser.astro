@@ -1,8 +1,9 @@
 ---
 /**
  * Heading + quick status filters (all · live · wip) + project grid.
- * The filters are plain radio buttons; the hiding is pure CSS (:has), so it
- * works without JavaScript. Only statuses that exist in the list are offered.
+ * The filters are plain radio buttons and work with CSS alone (:has). When
+ * public/js/site.js runs, it takes over ([data-js]) and animates the change
+ * with a view transition. Only statuses that exist in the list are offered.
  */
 import type { Project } from '../lib/projects';
 import { useStrings } from '../i18n';
@@ -17,21 +18,23 @@ interface Props {
   more?: { href: string; label: string };
   /** Unique per page, for the radio group. */
   id?: string;
+  /** Show the status filters (default true). */
+  filters?: boolean;
 }
 
 const t = useStrings();
-const { projects, title, as: Heading = 'h2', more, id = 'projects' } = Astro.props;
+const { projects, title, as: Heading = 'h2', more, id = 'projects', filters: showFilters = true } = Astro.props;
 const order = ['live', 'wip', 'archived'] as const;
 const statuses = order.filter((s) => projects.some((p) => p.data.status === s));
 const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => ({ value: s, label: t.status[s] }))];
 ---
 
-<section class="browser" aria-labelledby={`${id}-title`}>
+<section class="browser" aria-labelledby={`${id}-title`} data-browser>
   <div class="head">
     <div class="title-row">
       <Heading id={`${id}-title`} class="label">{title}</Heading>
       {
-        statuses.length > 1 && (
+        showFilters && statuses.length > 1 && (
           <fieldset class="filters">
             <legend class="visually-hidden">{t.filters.legend}</legend>
             {filters.map((f, i) => (
@@ -103,32 +106,42 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
     color: var(--dim);
   }
   label {
+    position: relative;
     cursor: pointer;
     color: var(--dim);
-    text-decoration: underline;
-    text-decoration-color: transparent;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 5px;
-    transition:
-      color var(--t-fast) var(--ease),
-      text-decoration-color var(--t-fast) var(--ease);
+    transition: color var(--t-fast) var(--ease);
+  }
+  /* the active filter's red underline grows from the left */
+  label::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 260ms var(--ease);
   }
   label:hover {
     color: var(--text-strong);
   }
   input:checked + label {
     color: var(--text-strong);
-    text-decoration-color: var(--accent);
+  }
+  input:checked + label::after {
+    transform: scaleX(1);
   }
   input:focus-visible + label {
     outline: 2px solid var(--text-strong);
     outline-offset: 3px;
   }
 
-  /* the filtering itself */
-  .browser:has(input[value='live']:checked) :global(.grid > li:not([data-status='live'])),
-  .browser:has(input[value='wip']:checked) :global(.grid > li:not([data-status='wip'])),
-  .browser:has(input[value='archived']:checked) :global(.grid > li:not([data-status='archived'])) {
+  /* the filtering itself, when site.js is not running */
+  .browser:not([data-js]):has(input[value='live']:checked) :global(.grid > li:not([data-status='live'])),
+  .browser:not([data-js]):has(input[value='wip']:checked) :global(.grid > li:not([data-status='wip'])),
+  .browser:not([data-js]):has(input[value='archived']:checked) :global(.grid > li:not([data-status='archived'])) {
     display: none;
   }
 </style>
