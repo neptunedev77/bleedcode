@@ -1,0 +1,174 @@
+/* ------------------------------------------------------------------
+   bleedcode: design tokens and base styles.
+   Every colour used anywhere lives here. A light theme only needs a
+   `:root[data-theme='light'] { ... }` block that overrides these.
+   ------------------------------------------------------------------ */
+
+:root {
+  /* surfaces */
+  --page: #0b0b0d;
+  --card: #121215;
+  --inner: #17171a;
+  --tile: #1f1f23;
+  --monogram: #2e2e33;
+  --chip: #26262a;
+  --shadow: #050506;
+
+  /* blood */
+  --accent: #b8304a; /* cherry red: large text, icons, fills */
+  --blood: #8e1b2b; /* dried blood */
+  --blood-dark: #5c0f1a; /* old blood */
+
+  /* lines */
+  --border-light: #e9dcd9; /* main card frame */
+  --border: #4a474f; /* inner cards */
+  --border-tile: #5a5660; /* nav tiles */
+  --divider: #2a2a2f;
+
+  /* text */
+  --text: #ece8e3;
+  --text-strong: #f4f0ea;
+  --text-soft: #c3bfba;
+  --muted: #a8a3a0;
+  --on-accent: #fff4f5;
+  --link-hover: #ffffff;
+
+  /* type */
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  --font-pixel: 'Silkscreen', var(--font-mono);
+
+  /* layout */
+  --card-max: 980px;
+  --card-pad-x: 36px;
+
+  color-scheme: dark;
+}
+
+/* Light theme hook (not in v1). Override the tokens above, e.g.:
+:root[data-theme='light'] {
+  --page: #f1ece6;
+  --card: #fbf8f4;
+  ...
+  color-scheme: light;
+}
+*/
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-radius: 0; /* no rounded corners anywhere */
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.55;
+  overflow-x: clip;
+}
+
+a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+img,
+svg {
+  display: block;
+}
+
+/* Pixel border: four hard shadows, so the corners come out notched.
+   Tune with --px-w (thickness), --px-c (colour) and --px-drop (extra shadow).
+   The knobs do not inherit, so a nested .px-border never picks up its parent's. */
+@property --px-w {
+  syntax: '*';
+  inherits: false;
+}
+@property --px-c {
+  syntax: '*';
+  inherits: false;
+}
+@property --px-drop {
+  syntax: '*';
+  inherits: false;
+}
+
+.px-border {
+  --_w: var(--px-w, 3px);
+  --_c: var(--px-c, var(--border));
+  box-shadow:
+    0 calc(var(--_w) * -1) 0 0 var(--_c),
+    0 var(--_w) 0 0 var(--_c),
+    calc(var(--_w) * -1) 0 0 0 var(--_c),
+    var(--_w) 0 0 0 var(--_c),
+    var(--px-drop, 0 0 0 0 transparent);
+}
+
+/* Silkscreen is only for small captions, labels and badges. */
+.pixel {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+}
+
+.dashed-top {
+  border-top: 3px dashed var(--divider);
+}
+
+/* Section label, e.g. "projects" */
+.label {
+  font-family: var(--font-pixel);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text-strong);
+}
+
+/* Underlined text link (e.g. "view all 6 →") */
+.link-under {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  border-bottom: 2px solid var(--accent);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 560px) {
+  :root {
+    --card-pad-x: 18px;
+  }
+}

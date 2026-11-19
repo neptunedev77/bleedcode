@@ -1,0 +1,26 @@
+---
+import { useStrings } from '../i18n';
+
+interface Props {
+  status: 'live' | 'wip' | 'archived';
+}
+
+const t = useStrings();
+const { status } = Astro.props;
+---
+
+<span class:list={['badge', 'pixel', status]}>{t.status[status]}</span>
+
+<style>
+  .badge {
+    flex: none;
+    font-size: 11px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+  .live {
+    padding: 0 6px;
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+</style>

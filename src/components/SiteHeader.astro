@@ -1,0 +1,136 @@
+---
+/**
+ * Card header. `home` shows the big name, subtitle, nav tiles and the cat
+ * sitting on the divider. `compact` (sub-pages) shows a smaller brand link and the nav.
+ */
+import { site } from '../site.config';
+import Captions from './Captions.astro';
+import NavTiles from './NavTiles.astro';
+import Mascot from './Mascot.astro';
+import Stain from './Stain.astro';
+
+interface Props {
+  variant?: 'home' | 'compact';
+}
+
+const { variant = 'compact' } = Astro.props;
+---
+
+<header class:list={['header', variant]}>
+  <Captions />
+  {
+    variant === 'home' ? (
+      <div class="hero">
+        <div class="intro">
+          <h1 class="brand">
+            bleed<span class="accent">code</span>
+          </h1>
+          <p class="subtitle pixel">
+            {site.subtitle.map((line, i) => (i ? [<br />, line] : line))}
+          </p>
+          <div class="nav">
+            <NavTiles />
+          </div>
+        </div>
+        <div class="perch">
+          <Stain kind="puddle" scale={3} bottom="-6px" left="-22px" />
+          <Mascot scale={3} />
+        </div>
+      </div>
+    ) : (
+      <div class="bar">
+        <a class="brand small" href="/">
+          bleed<span class="accent">code</span>
+          <span class="visually-hidden"> home</span>
+        </a>
+        <NavTiles />
+      </div>
+    )
+  }
+</header>
+
+<style>
+  .header {
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+  }
+  .brand {
+    font-family: var(--font-mono);
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--text-strong);
+  }
+  .brand.small {
+    font-size: 40px;
+  }
+  .accent {
+    color: var(--accent);
+  }
+
+  /* home */
+  .home {
+    /* the hero's bottom edge is the projects divider */
+    margin-bottom: -34px;
+  }
+  .hero {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+  }
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 30px;
+  }
+  .subtitle {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-soft);
+  }
+  .nav {
+    padding-top: 14px;
+  }
+  .perch {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    margin-right: 24px;
+    margin-left: auto;
+  }
+  .perch :global(.mascot) {
+    position: relative;
+    z-index: 2;
+    /* feet on the 3px dashed line below */
+    margin-bottom: -3px;
+  }
+
+  /* sub-pages */
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px 32px;
+  }
+  .bar .brand:hover .accent {
+    color: var(--accent);
+  }
+
+  @media (max-width: 560px) {
+    .brand {
+      font-size: 52px;
+    }
+    .brand.small {
+      font-size: 34px;
+    }
+    .intro {
+      padding-bottom: 0;
+    }
+  }
+</style>

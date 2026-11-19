@@ -1,0 +1,104 @@
+---
+import Card from '../layouts/Card.astro';
+import { site } from '../site.config';
+import { useStrings } from '../i18n';
+
+const t = useStrings();
+
+/* Content for /me. Everything marked TODO still needs real text. */
+const bio = ['TODO: short bio (two or three sentences about who you are and what you build).'];
+const education = ['TODO: degree, university, years.'];
+const focus = ['cloud', 'networking', 'sre'];
+---
+
+<Card title={t.me.title} description={t.me.description}>
+  <article class="me dashed-top" aria-labelledby="page-title">
+    <h1 id="page-title" class="label">{t.me.title}</h1>
+
+    <p class="name">{site.author}</p>
+
+    <section aria-labelledby="bio-heading">
+      <h2 id="bio-heading" class="sub pixel">{t.me.bio}</h2>
+      {bio.map((line) => <p>{line}</p>)}
+    </section>
+
+    <section aria-labelledby="edu-heading">
+      <h2 id="edu-heading" class="sub pixel">{t.me.education}</h2>
+      <ul>{education.map((line) => <li>{line}</li>)}</ul>
+    </section>
+
+    <section aria-labelledby="focus-heading">
+      <h2 id="focus-heading" class="sub pixel">{t.me.focus}</h2>
+      <ul class="chips">{focus.map((item) => <li>{item}</li>)}</ul>
+    </section>
+
+    <section aria-labelledby="contact-heading">
+      <h2 id="contact-heading" class="sub pixel">{t.me.contact}</h2>
+      <ul class="contact">
+        <li>
+          <span class="pixel">email</span>
+          <a class="link-under" href={`mailto:${site.email}`}>{site.email}</a>
+        </li>
+        <li>
+          <span class="pixel">github</span>
+          <a class="link-under" href={site.github}>github.com/{site.githubUser} ↗</a>
+        </li>
+      </ul>
+    </section>
+  </article>
+</Card>
+
+<style>
+  .me {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    padding-top: 26px;
+  }
+  .me > * {
+    max-width: 68ch;
+  }
+  .name {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-strong);
+  }
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .sub {
+    font-size: 13px;
+    color: var(--text-strong);
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .chips {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .chips li {
+    font-size: 12px;
+    padding: 1px 7px;
+    background: var(--chip);
+    color: var(--text-soft);
+  }
+  .contact li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 14px;
+  }
+  .contact .pixel {
+    min-width: 70px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+</style>

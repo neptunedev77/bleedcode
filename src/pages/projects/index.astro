@@ -1,0 +1,25 @@
+---
+import Card from '../../layouts/Card.astro';
+import ProjectGrid from '../../components/ProjectGrid.astro';
+import { getProjects } from '../../lib/projects';
+import { useStrings } from '../../i18n';
+
+const t = useStrings();
+const projects = await getProjects();
+---
+
+<Card title={t.projects.title} description={t.projects.description}>
+  <section class="page dashed-top" aria-labelledby="page-title">
+    <h1 id="page-title" class="label">{t.projects.title}</h1>
+    <ProjectGrid projects={projects} headingLevel={2} />
+  </section>
+</Card>
+
+<style>
+  .page {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 26px;
+  }
+</style>
