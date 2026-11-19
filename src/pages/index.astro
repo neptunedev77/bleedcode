@@ -4,11 +4,11 @@ import ProjectsBrowser from '../components/ProjectsBrowser.astro';
 import Mascot from '../components/Mascot.astro';
 import Blood from '../components/Blood.astro';
 import { site } from '../site.config';
-import { getFeaturedProjects } from '../lib/projects';
+import { getHomeProjects } from '../lib/projects';
 import { useStrings } from '../i18n';
 
 const t = useStrings();
-const featured = await getFeaturedProjects(4);
+const projects = await getHomeProjects(2);
 const [line1, line2] = site.hero.lines;
 ---
 
@@ -16,12 +16,14 @@ const [line1, line2] = site.hero.lines;
   <section class="hero" aria-labelledby="hero-title">
     <div class="copy">
       <h1 id="hero-title" class="headline">
-        <span class="l1">{line1}</span>
-        <span class="l2">
-          {line2}
-          <svg class="spark" viewBox="0 0 7 7" width="21" height="21" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
-            <path d="M3 0h1v2H3zM3 5h1v2H3zM0 3h2v1H0zM5 3h2v1H5zM2 2h3v3H2z"></path>
-          </svg>
+        <span class="line l1"><span class="in">{line1}</span></span>
+        <span class="line l2">
+          <span class="in">
+            {line2}
+            <svg class="spark" viewBox="0 0 7 7" shape-rendering="crispEdges" aria-hidden="true" focusable="false">
+              <path d="M3 0h1v2H3zM3 5h1v2H3zM0 3h2v1H0zM5 3h2v1H5zM2 2h3v3H2z"></path>
+            </svg>
+          </span>
         </span>
       </h1>
       <p class="meta">{site.hero.meta}</p>
@@ -33,7 +35,12 @@ const [line1, line2] = site.hero.lines;
     </div>
   </section>
 
-  <ProjectsBrowser projects={featured} title={t.home.projects} more={{ href: '/projects', label: t.home.viewAll }} />
+  <ProjectsBrowser
+    projects={projects}
+    title={t.home.projects}
+    filters={false}
+    more={{ href: '/projects', label: t.home.viewAll }}
+  />
 </Card>
 
 <style>
@@ -47,33 +54,50 @@ const [line1, line2] = site.hero.lines;
     border-bottom: var(--border-w) solid var(--line);
   }
   .copy {
+    /* lets the second line size itself to the space it has */
+    container-type: inline-size;
     display: flex;
     flex-direction: column;
     gap: var(--s2);
     padding-bottom: var(--s4);
-    max-width: 620px;
+    max-width: 640px;
     flex: 1 1 420px;
   }
   .headline {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    font-size: var(--fs-xl);
+    gap: var(--s1);
     font-weight: 700;
-    line-height: 1.1;
     letter-spacing: -0.03em;
-    text-wrap: balance;
+  }
+  .line {
+    display: block;
+    /* each line is revealed through its own window; a little room for descenders */
+    overflow: clip;
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
+  }
+  .in {
+    display: inline-block;
   }
   .l1 {
+    font-size: var(--fs-xl);
+    line-height: 1.1;
     color: var(--text-strong);
   }
+  /* one line at any width: about 22.5em wide in Plex Mono, so scale to fit */
   .l2 {
+    font-size: min(var(--fs-lg), 100cqi / 22.5);
+    line-height: 1.3;
+    white-space: nowrap;
     color: var(--accent);
   }
   .spark {
     display: inline-block;
-    margin-left: var(--s1);
-    vertical-align: 0.15em;
+    width: 0.8em;
+    height: 0.8em;
+    margin-left: 0.3em;
+    vertical-align: -0.02em;
     fill: var(--text-strong);
     image-rendering: pixelated;
   }
@@ -90,8 +114,42 @@ const [line1, line2] = site.hero.lines;
     margin: 0 var(--s3) 0 auto;
   }
 
+  /* entrance: each line drops into its window, then the meta line and the spark */
+  @media (prefers-reduced-motion: no-preference) {
+    .in {
+      animation: drop 700ms var(--ease) both;
+    }
+    .l2 .in {
+      animation-delay: 90ms;
+    }
+    .meta {
+      animation: rise 600ms var(--ease) 260ms both;
+    }
+    .spark {
+      animation: spark 500ms var(--ease) 560ms both;
+    }
+  }
+  @keyframes drop {
+    from {
+      opacity: 0;
+      transform: translateY(-105%);
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  @keyframes spark {
+    from {
+      opacity: 0;
+      transform: scale(0.2) rotate(-90deg);
+    }
+  }
+
   @media (max-width: 560px) {
-    .headline {
+    .l1 {
       font-size: var(--s4);
     }
     .copy {

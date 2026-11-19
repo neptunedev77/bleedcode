@@ -12,7 +12,7 @@ export const site = {
   /** Home hero: two headline lines and a short meta line. */
   hero: {
     lines: ['Developer based in Braga.', 'My corner for code & side projects.'],
-    meta: 'MSc Informatics Engineering @ UMinho · Focused on Cloud, Networking & SRE',
+    meta: 'MSc Computer Science and Engineering @ UMinho · Focused on Cloud, Networking & SRE',
   },
 
   /** Default meta / Open Graph description. */
