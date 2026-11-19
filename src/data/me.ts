@@ -3,7 +3,7 @@
 export const hello = 'Developer based in Braga, Portugal.';
 
 export const about = [
-  "Currently an MSc student in Informatics Engineering at UMinho, where I enjoy building web apps, automation and everyday tools, while also exploring the cloud and networking layers that keep large-scale systems alive.",
+  "Currently an MSc student in Computer Science and Engineering at UMinho, where I enjoy building web apps, automation and everyday tools, while also exploring the cloud and networking layers that keep large-scale systems alive.",
   "Away from the terminal, you'll usually find me listening to metal, playing guitar, shooting photos, or stopping to pet random cats.",
 ];
 
@@ -36,13 +36,13 @@ export interface EducationEntry {
 /** Most recent first. */
 export const education: EducationEntry[] = [
   {
-    degree: 'M.Sc. in Informatics Engineering (Computer Science & Engineering)',
+    degree: 'MSc in Computer Science and Engineering',
     school: 'University of Minho',
     place: 'Braga',
     start: 2026,
   },
   {
-    degree: 'B.Sc. in Informatics Engineering (Computer Science & Engineering)',
+    degree: 'BSc in Computer Science and Engineering',
     school: 'UTAD',
     place: 'Vila Real',
     start: 2022,
