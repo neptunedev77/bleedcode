@@ -6,16 +6,11 @@ const t = useStrings();
 const built = new Date();
 ---
 
-<footer class="footer dashed-top pixel">
-  <span>
-    © {built.getUTCFullYear()} {site.name} · <a class="mail" href={`mailto:${site.email}`}>{site.email}</a>
-  </span>
-  <span class="meta">
-    <span>{t.footer.updated} <time datetime={built.toISOString().slice(0, 10)}>{formatDate(built)}</time></span>
-    <!-- Placeholders: language switch and theme toggle are not in v1. -->
-    <span title={t.footer.soon}>{t.footer.pt}</span>
-    <span title={t.footer.soon}>{t.footer.theme}</span>
-  </span>
+<footer class="footer">
+  <p>© {built.getUTCFullYear()} {site.author} · {site.location}</p>
+  <p>
+    <a class="link" href={`mailto:${site.email}`}>{site.email}</a> · {t.footer.updated}{' '}<time datetime={built.toISOString().slice(0, 10)}>{formatDate(built)}</time>
+  </p>
 </footer>
 
 <style>
@@ -23,20 +18,10 @@ const built = new Date();
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    padding-top: 18px;
-    font-size: 11px;
+    gap: var(--s1) var(--s3);
+    padding-top: var(--s3);
+    border-top: var(--border-w) solid var(--line);
+    font-size: var(--fs-sm);
     color: var(--muted);
-  }
-  .mail {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--text);
-  }
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
   }
 </style>
