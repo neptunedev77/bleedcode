@@ -7,8 +7,10 @@ const built = new Date();
 ---
 
 <footer class="footer">
-  <a class="link" href={`mailto:${site.email}`}>{site.email}</a>
-  <p>
+  <a class="link copy" href={`mailto:${site.email}`} data-copy={site.email}>
+    <span data-copy-text>{site.email}</span>
+  </a>
+  <p class="updated">
     {t.footer.updated}{' '}<time datetime={built.toISOString().slice(0, 10)}>{formatDate(built)}</time>
   </p>
 </footer>
@@ -23,6 +25,8 @@ const built = new Date();
     padding-top: var(--s3);
     border-top: var(--border-w) solid var(--line);
     font-size: var(--fs-sm);
-    color: var(--muted);
+  }
+  .updated {
+    color: var(--dim);
   }
 </style>

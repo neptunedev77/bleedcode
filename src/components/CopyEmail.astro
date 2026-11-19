@@ -1,0 +1,66 @@
+---
+/**
+ * Click-to-copy for email links. Any link with `data-copy="address"` copies the
+ * address instead of opening a mail app, shows "copied to clipboard ✓" in green
+ * for a moment, and announces it to screen readers. If the clipboard is not
+ * available, the link's normal mailto: behaviour is left alone.
+ * Text swaps in the element marked `data-copy-text`; icon-only links get a
+ * small tooltip instead (see .copied in global.css).
+ */
+import { useStrings } from '../i18n';
+
+const t = useStrings();
+---
+
+<div class="visually-hidden" role="status" aria-live="polite" data-copy-status></div>
+
+<script is:inline define:vars={{ done: t.copy.done, announce: t.copy.announce }}>
+  // Older, more permissive copy path for when the async Clipboard API is refused.
+  const legacyCopy = (text) => {
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.setAttribute('readonly', '');
+    area.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+    document.body.appendChild(area);
+    area.select();
+    let ok = false;
+    try {
+      ok = document.execCommand('copy');
+    } catch {
+      ok = false;
+    }
+    area.remove();
+    return ok;
+  };
+
+  document.addEventListener('click', async (event) => {
+    const link = event.target instanceof Element ? event.target.closest('[data-copy]') : null;
+    if (!link) return;
+    event.preventDefault();
+    const text = link.getAttribute('data-copy');
+    let ok = false;
+    try {
+      await navigator.clipboard.writeText(text);
+      ok = true;
+    } catch {
+      ok = legacyCopy(text);
+    }
+    if (!ok) {
+      // no clipboard at all: fall back to the mail app
+      window.location.href = link.getAttribute('href');
+      return;
+    }
+    const label = link.querySelector('[data-copy-text]');
+    const status = document.querySelector('[data-copy-status]');
+    if (label && !label.dataset.original) label.dataset.original = label.textContent;
+    if (label) label.textContent = done;
+    link.classList.add('copied');
+    if (status) status.textContent = announce;
+    clearTimeout(link._copyTimer);
+    link._copyTimer = setTimeout(() => {
+      if (label) label.textContent = label.dataset.original;
+      link.classList.remove('copied');
+      if (status) status.textContent = '';
+    }, 2000);
+  });
+</script>

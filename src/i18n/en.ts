@@ -7,16 +7,21 @@ export const en = {
     me: '/me',
     logo: 'bleedcode, home',
     github: 'GitHub profile',
-    contact: 'Send an email',
+    contact: 'Copy email address',
   },
   home: {
     projects: 'Projects',
     viewAll: 'all projects →',
   },
+  filters: {
+    legend: 'Filter projects by status',
+    all: 'all',
+  },
   projects: {
     title: 'Projects',
     description: 'Everything built under bleedcode: live apps and work in progress.',
     openLive: (name: string) => `Visit ${name} (opens in a new tab)`,
+    openRepo: (name: string) => `Source code of ${name} on GitHub (opens in a new tab)`,
   },
   project: {
     back: '← all projects',
@@ -24,7 +29,9 @@ export const en = {
     links: 'Links',
     live: 'live site',
     repo: 'source',
+    features: 'Features',
     screenshots: 'Screenshots',
+    noScreenshots: 'no screenshots yet',
     kind: { personal: 'personal project', academic: 'academic project' },
   },
   status: { live: 'live', wip: 'wip', archived: 'archived' },
@@ -45,7 +52,11 @@ export const en = {
     home: '← back home',
   },
   footer: {
-    updated: 'updated',
+    updated: 'last updated',
+  },
+  copy: {
+    done: 'copied to clipboard ✓',
+    announce: 'Email address copied to clipboard',
   },
   mascot: {
     alt: 'The bleedcode cat: a black pixel-art cat with a red scarf',

@@ -9,8 +9,11 @@ export const site = {
   github: 'https://github.com/neptunedev77',
   githubUser: 'neptunedev77',
 
-  /** Hero line on the home page. */
-  tagline: 'Developer based in Braga, Portugal.',
+  /** Home hero: two headline lines and a short meta line. */
+  hero: {
+    lines: ['Developer based in Braga.', 'My corner for code & side projects.'],
+    meta: 'MSc Informatics Engineering @ UMinho · Focused on Cloud, Networking & SRE',
+  },
 
   /** Default meta / Open Graph description. */
   description: 'bleedcode: projects and web apps by a developer based in Braga, Portugal.',

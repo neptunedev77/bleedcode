@@ -31,6 +31,8 @@
   --text: #ece8e3; /* 15.3 / 14.7 / 13.8 */
   --text-soft: #c3bfba; /* 10.2 /  9.8 /  9.2 */
   --muted: #a8a3a0; /*  7.5 /  7.2 /  6.7 */
+  --dim: #8a8582; /*  5.1 /  4.9: quiet meta text */
+  --ok: #5fd38d; /* 10.0 /  9.5: success feedback */
   /* --accent is 3.2:1 on --card: large text (>=24px) and non-text only.
      The live chip (--on-accent on --accent) is 5.5:1. */
 
@@ -165,11 +167,12 @@ a {
   animation-duration: 220ms;
   animation-timing-function: var(--ease);
 }
+/* old and new overlap (no gap with nothing on screen), so there is no flash */
 ::view-transition-old(page) {
-  animation: vt-out 150ms var(--ease) both;
+  animation: vt-out 160ms ease-out both;
 }
 ::view-transition-new(page) {
-  animation: vt-in 220ms var(--ease) 40ms both;
+  animation: vt-in 220ms var(--ease) both;
 }
 
 @keyframes vt-out {
@@ -180,7 +183,7 @@ a {
 @keyframes vt-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px);
   }
 }
 
@@ -198,6 +201,31 @@ a {
   *::after {
     transition: none !important;
   }
+}
+
+/* click-to-copy feedback (see CopyEmail.astro) */
+[data-copy] {
+  position: relative;
+}
+a[data-copy].copied,
+a[data-copy].copied:hover {
+  color: var(--ok);
+  text-decoration-color: var(--ok);
+  border-color: var(--ok);
+}
+/* icon-only links have no text to swap, so they get a small tag */
+[data-copy].copied:not(:has([data-copy-text]))::after {
+  content: 'copied ✓';
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  padding: 2px var(--s1);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--ok);
+  background: var(--inner);
+  border: var(--border-w) solid var(--ok);
 }
 
 .visually-hidden {
