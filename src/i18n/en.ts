@@ -16,7 +16,7 @@ export const en = {
   projects: {
     title: 'Projects',
     description: 'Everything built under bleedcode: live apps and work in progress.',
-    openLive: (name: string) => `Open ${name} (live site, new tab)`,
+    openLive: (name: string) => `Visit ${name} (opens in a new tab)`,
   },
   project: {
     back: '← all projects',
@@ -30,11 +30,13 @@ export const en = {
   status: { live: 'live', wip: 'wip', archived: 'archived' },
   me: {
     title: '/me',
-    description: 'About the developer behind bleedcode.',
-    about: [
-      "I like building apps and, more and more, understanding what's underneath them: cloud, networking, and how large-scale infrastructure really works.",
-      'Away from the keyboard: metal, guitars, photography and cats.',
-    ],
+    description: 'About the developer behind bleedcode: background, education and interests.',
+    education: 'Education',
+    present: 'present',
+    now: 'now',
+    interests: 'Interests',
+    focus: 'at the keyboard',
+    offline: 'away from it',
     contact: 'Contact',
   },
   notFound: {
