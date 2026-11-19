@@ -1,33 +1,52 @@
 ---
+/**
+ * Project card. The project name is the main link and is stretched over the
+ * whole card; live projects also get a separate external-link button in the
+ * top-right corner (a sibling link, never nested inside the main one).
+ */
 import type { Project } from '../lib/projects';
+import { useStrings } from '../i18n';
 import ProjectIcon from './ProjectIcon.astro';
 import StatusBadge from './StatusBadge.astro';
 import Chips from './Chips.astro';
+import Icon from './Icon.astro';
 
 interface Props {
   project: Project;
   headingLevel?: 2 | 3;
 }
 
+const t = useStrings();
 const { project, headingLevel = 3 } = Astro.props;
 const p = project.data;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const external = p.status === 'live' && p.url ? p.url : undefined;
 ---
 
-<a class="card" href={`/projects/${p.slug}`}>
+<article class:list={['card', { 'has-ext': external }]}>
   <ProjectIcon icon={p.icon} logo={p.logo} />
   <div class="body">
     <div class="title">
-      <Heading class="name">{p.name}</Heading>
+      <Heading class="name">
+        <a class="main" href={`/projects/${p.slug}`}>{p.name}</a>
+      </Heading>
       <StatusBadge status={p.status} />
     </div>
     <p class="tagline">{p.tagline}</p>
     <Chips items={p.stack} max={2} />
   </div>
-</a>
+  {
+    external && (
+      <a class="ext" href={external} target="_blank" rel="noopener" aria-label={t.projects.openLive(p.name)}>
+        <Icon name="external" size={16} />
+      </a>
+    )
+  }
+</article>
 
 <style>
   .card {
+    position: relative;
     display: flex;
     align-items: flex-start;
     gap: var(--s2);
@@ -36,15 +55,34 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3';
     background: var(--inner);
     border: var(--border-w) solid var(--line);
   }
-  .card:hover {
+  .card:has(.main:hover) {
     border-color: var(--accent);
   }
+  .card:has(.main:focus-visible) {
+    outline: 2px solid var(--text-strong);
+    outline-offset: 3px;
+  }
+
+  /* the name link covers the whole card */
+  .main::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .main:focus-visible {
+    outline: none;
+  }
+
   .body {
     flex: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
     gap: var(--s1);
+  }
+  .has-ext .title {
+    /* room for the 32px button */
+    padding-right: var(--s5);
   }
   .title {
     display: flex;
@@ -61,5 +99,24 @@ const Heading = `h${headingLevel}` as 'h2' | 'h3';
   .tagline {
     font-size: var(--fs-sm);
     color: var(--text-soft);
+  }
+
+  .ext {
+    position: absolute;
+    top: var(--s2);
+    right: var(--s2);
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    color: var(--text-soft);
+    background: var(--inner);
+    border: var(--border-w) solid var(--line-strong);
+  }
+  .ext:hover {
+    color: var(--text-strong);
+    border-color: var(--accent);
   }
 </style>
