@@ -17,9 +17,14 @@
   --line-strong: #6b6670; /* square icon buttons: 3.35:1 on the card */
   --border-w: 1px;
 
-  /* red: only the "code" in the wordmark, the live chip and hover */
+  /* red: the wordmark's "code", the live chip, details and hover */
   --accent: #b8304a;
   --on-accent: #fff4f5;
+  --accent-soft: rgb(184 48 74 / 0.14); /* hover wash */
+
+  /* blood (pixel-art stains) */
+  --blood: #8e1b2b;
+  --blood-dark: #5c0f1a;
 
   /* text (contrast on --card / --inner / --tile; AA needs 4.5:1) */
   --text-strong: #f4f0ea; /* 16.5 / 15.8 / 14.8 */
@@ -33,9 +38,8 @@
   --icon: #c3bfba;
   --icon-2: #6b6670;
 
-  /* type: one text font, the pixel font only in the wordmark */
+  /* type: one font */
   --font: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
-  --font-wordmark: 'Silkscreen', var(--font);
   --fs-sm: 14px; /* minimum size for any text */
   --fs-md: 16px;
   --fs-lg: 24px;
@@ -47,6 +51,10 @@
   --s3: 24px;
   --s4: 32px;
   --s5: 48px;
+
+  /* motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-fast: 180ms;
 
   /* layout */
   --card-max: 980px;
@@ -105,6 +113,11 @@ svg {
 a {
   color: inherit;
   text-decoration: none;
+  transition:
+    color var(--t-fast) var(--ease),
+    background-color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    text-decoration-color var(--t-fast) var(--ease);
 }
 
 .link {
@@ -135,17 +148,40 @@ a {
 }
 
 /* Page transitions: native cross-document view transitions (no JS).
-   The header has its own view-transition-name, so it stays put while
-   the rest of the page cross-fades. Browsers without support just navigate. */
+   The card always fills the viewport, so its frame never jumps; header,
+   card and footer hold still and only the page content fades and rises.
+   Browsers without support just navigate. */
 @view-transition {
   navigation: auto;
 }
 
-::view-transition-group(*),
-::view-transition-old(*),
-::view-transition-new(*) {
-  animation-duration: 200ms;
-  animation-timing-function: ease-out;
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-group(page) {
+  animation-duration: 220ms;
+  animation-timing-function: var(--ease);
+}
+::view-transition-old(page) {
+  animation: vt-out 150ms var(--ease) both;
+}
+::view-transition-new(page) {
+  animation: vt-in 220ms var(--ease) 40ms both;
+}
+
+@keyframes vt-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -155,7 +191,12 @@ a {
   ::view-transition-group(*),
   ::view-transition-old(*),
   ::view-transition-new(*) {
-    animation: none;
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
   }
 }
 

@@ -4,13 +4,13 @@
  */
 import '@fontsource/ibm-plex-mono/500.css';
 import '@fontsource/ibm-plex-mono/700.css';
-import '@fontsource/silkscreen/400.css';
 import '../styles/global.css';
 
 import { site } from '../site.config';
 import { defaultLocale } from '../i18n';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import Blood from '../components/Blood.astro';
 
 interface Props {
   /** Page title; the site name is appended. Omit on the home page. */
@@ -57,6 +57,8 @@ const ogImage = new URL('/og.png', base).href;
   <body>
     <div class="page">
       <div class="card">
+        <Blood kind="corner" scale={5} scaleSmall={3} top="-6px" left="-6px" />
+        <Blood kind="smear" scale={4} scaleSmall={3} bottom="-7px" right="14%" />
         <SiteHeader />
         <main id="main">
           <slot />
@@ -69,10 +71,14 @@ const ogImage = new URL('/og.png', base).href;
 
 <style>
   .page {
-    padding: var(--s3) var(--s2) var(--s5);
+    --page-pad-y: var(--s3);
+    padding: var(--page-pad-y) var(--s2);
   }
   .card {
+    position: relative;
     max-width: var(--card-max);
+    /* always fill the viewport, so the frame doesn't jump between pages */
+    min-height: calc(100dvh - 2 * var(--page-pad-y));
     margin: 0 auto;
     padding: var(--card-pad);
     display: flex;
@@ -80,15 +86,22 @@ const ogImage = new URL('/og.png', base).href;
     gap: var(--s4);
     background: var(--card);
     border: var(--border-w) solid var(--frame);
+    view-transition-name: card;
   }
   main {
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: var(--s4);
+    view-transition-name: page;
+  }
+  .card > :global(footer) {
+    view-transition-name: site-footer;
   }
   @media (max-width: 560px) {
     .page {
-      padding: var(--s2) var(--s1) var(--s4);
+      --page-pad-y: var(--s2);
+      padding-inline: var(--s1);
     }
   }
 </style>
