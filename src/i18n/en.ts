@@ -8,11 +8,14 @@ export const en = {
     logo: 'bleedcode, home',
     github: 'GitHub profile',
     contact: 'Copy email address to clipboard',
+    toLight: 'Switch to light theme',
+    toDark: 'Switch to dark theme',
   },
   home: {
     title: 'solo developer lab in Braga',
     projects: 'Projects',
     explore: (n: number) => `all ${n} projects`,
+    viewAll: 'all projects →',
   },
   filters: {
     legend: 'Filter projects by status',

@@ -72,9 +72,34 @@
   color-scheme: dark;
 }
 
-/* Light theme hook (not in v1), e.g.:
-:root[data-theme='light'] { --page: #f1ece6; --card: #fbf8f4; ... color-scheme: light; }
-*/
+/* Light theme: "Cool Terminal Grey". Same layout and pixel art, other tokens.
+   Contrast on --card: text 16:1, muted 7:1, dim 5.7:1, white on accent 4.9:1. */
+:root[data-theme='light'] {
+  --page: #e4e4e7;
+  --card: #f4f4f5;
+  --inner: #eaeaef;
+  --tile: #dfdfe5;
+
+  --frame: #d4d4d8;
+  --line: #d4d4d8;
+  --line-strong: #8e8e96;
+
+  --accent: #d92648;
+  --on-accent: #ffffff;
+  --accent-soft: rgb(217 38 72 / 0.1);
+
+  --text-strong: #18181b;
+  --text: #27272a;
+  --text-soft: #3f3f46;
+  --muted: #52525b;
+  --dim: #5f5f68;
+  --ok: #166534;
+
+  --icon: #3f3f46;
+  --icon-2: #a1a1aa;
+
+  color-scheme: light;
+}
 
 @media (max-width: 560px) {
   :root {
@@ -265,6 +290,27 @@ html.filtering .card {
   from {
     opacity: 0;
     transform: scale(0.97);
+  }
+}
+
+/* Theme switch (site.js): only the whole page cross-fades, nothing moves */
+html.theming * {
+  view-transition-name: none !important;
+}
+html.theming::view-transition-old(root) {
+  animation: theme-out 260ms ease both;
+}
+html.theming::view-transition-new(root) {
+  animation: theme-in 260ms ease both;
+}
+@keyframes theme-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes theme-in {
+  from {
+    opacity: 0;
   }
 }
 

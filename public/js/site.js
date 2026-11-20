@@ -189,4 +189,40 @@
       });
     });
   });
+
+  /* ------------------------------------------------------------------
+     4. Theme toggle ([data-theme-toggle]). theme.js already applied the
+        saved choice before paint; this shows the button and switches,
+        with a short cross-fade of the whole page.
+     ------------------------------------------------------------------ */
+  const root = document.documentElement;
+  const isLight = () => root.dataset.theme === 'light';
+  document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+    const label = () => {
+      button.setAttribute('aria-label', isLight() ? button.dataset.toDark : button.dataset.toLight);
+    };
+    label();
+    button.hidden = false;
+    button.addEventListener('click', () => {
+      const next = isLight() ? 'dark' : 'light';
+      const set = () => {
+        if (next === 'light') root.dataset.theme = 'light';
+        else delete root.dataset.theme;
+        label();
+      };
+      try {
+        localStorage.setItem('theme', next);
+      } catch {
+        /* storage blocked: the switch still works for this page */
+      }
+      if (!document.startViewTransition || reduceMotion.matches) {
+        set();
+        return;
+      }
+      root.classList.add('theming');
+      const transition = document.startViewTransition(set);
+      transition.updateCallbackDone.catch(set);
+      transition.finished.finally(() => root.classList.remove('theming'));
+    });
+  });
 })();
