@@ -53,9 +53,10 @@ const links = [
       data-trace
       hidden
     >
-      <span class="sun"><Icon name="sun" /></span>
-      <span class="moon"><Icon name="moon" /></span>
+      <span class="glyph sun"><Icon name="sun" /></span>
+      <span class="glyph moon"><Icon name="moon" /></span>
     </button>
+    <span class="divider" aria-hidden="true"></span>
     <a class="icon-btn" href={site.github} aria-label={t.nav.github} data-trace>
       <Icon name="github" />
     </a>
@@ -116,16 +117,52 @@ const links = [
     display: flex;
     gap: var(--s1);
   }
-  /* theme toggle: the sun shows in dark mode (go light), the moon in light mode */
-  .theme .moon,
+  /* theme toggle: sun in dark mode (go light), moon in light mode.
+     Both are stacked; the one not in use is turned away and faded out. */
+  .theme {
+    position: relative;
+    overflow: hidden;
+  }
+  .glyph {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      transform 420ms var(--ease),
+      opacity 260ms var(--ease);
+  }
+  .moon {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+  }
   :global(html[data-theme='light']) .theme .sun {
-    display: none;
+    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
   }
   :global(html[data-theme='light']) .theme .moon {
-    display: flex;
+    opacity: 1;
+    transform: none;
   }
-  .theme .sun {
-    display: flex;
+  .theme:hover .sun {
+    transform: rotate(45deg);
+  }
+  :global(html[data-theme='light']) .theme:hover .moon {
+    transform: rotate(-15deg);
+  }
+
+  /* a thin line between the theme switch and the links */
+  .divider {
+    align-self: center;
+    width: 1px;
+    height: 24px;
+    margin: 0 var(--s1);
+    background: var(--line-strong);
+    opacity: 0.6;
+  }
+  .theme[hidden] + .divider {
+    display: none;
   }
   .icon-btn {
     padding: 0;

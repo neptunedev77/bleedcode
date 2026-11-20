@@ -293,25 +293,15 @@ html.filtering .card {
   }
 }
 
-/* Theme switch (site.js): only the whole page cross-fades, nothing moves */
+/* Theme switch (site.js): the new theme spreads out from the toggle in a
+   circle over the old one. The circle itself is animated from site.js. */
 html.theming * {
   view-transition-name: none !important;
 }
-html.theming::view-transition-old(root) {
-  animation: theme-out 260ms ease both;
-}
+html.theming::view-transition-old(root),
 html.theming::view-transition-new(root) {
-  animation: theme-in 260ms ease both;
-}
-@keyframes theme-out {
-  to {
-    opacity: 0;
-  }
-}
-@keyframes theme-in {
-  from {
-    opacity: 0;
-  }
+  animation: none;
+  mix-blend-mode: normal;
 }
 
 /* text-style buttons (e.g. the footer email, which copies on click) */

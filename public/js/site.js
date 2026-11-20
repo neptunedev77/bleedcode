@@ -193,7 +193,7 @@
   /* ------------------------------------------------------------------
      4. Theme toggle ([data-theme-toggle]). theme.js already applied the
         saved choice before paint; this shows the button and switches,
-        with a short cross-fade of the whole page.
+        revealing the new theme in a circle that grows from the button.
      ------------------------------------------------------------------ */
   const root = document.documentElement;
   const isLight = () => root.dataset.theme === 'light';
@@ -219,9 +219,22 @@
         set();
         return;
       }
+      // the new theme grows out of the button as a circle
+      const box = button.getBoundingClientRect();
+      const x = box.left + box.width / 2;
+      const y = box.top + box.height / 2;
+      const r = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
       root.classList.add('theming');
       const transition = document.startViewTransition(set);
       transition.updateCallbackDone.catch(set);
+      transition.ready
+        .then(() => {
+          root.animate(
+            { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
+            { duration: 560, easing: 'cubic-bezier(0.65, 0, 0.35, 1)', pseudoElement: '::view-transition-new(root)' },
+          );
+        })
+        .catch(() => {});
       transition.finished.finally(() => root.classList.remove('theming'));
     });
   });
