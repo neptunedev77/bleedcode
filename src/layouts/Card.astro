@@ -9,7 +9,7 @@ import plex700 from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-700-nor
 import '../styles/global.css';
 
 import { site } from '../site.config';
-import { defaultLocale } from '../i18n';
+import { defaultLocale, useStrings } from '../i18n';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import Blood from '../components/Blood.astro';
@@ -24,7 +24,7 @@ interface Props {
 }
 
 const { title, description = site.description, index = true } = Astro.props;
-const fullTitle = title ? `${title} · ${site.name}` : site.name;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${useStrings().home.title}`;
 const base = Astro.site ?? site.url;
 const canonical = new URL(Astro.url.pathname, base).href;
 const ogImage = new URL('/og.png', base).href;
@@ -68,7 +68,7 @@ const ogImage = new URL('/og.png', base).href;
   <body>
     <div class="page">
       <div class="card">
-        <Blood kind="corner" scale={5} scaleSmall={3} top="-1px" left="-1px" />
+        <Blood kind="corner" scale={5} scaleSmall={3} top="-1px" left="-1px" radius="var(--radius)" />
         <Blood kind="smear" scale={4} scaleSmall={3} bottom="-7px" right="14%" />
         <SiteHeader />
         <main id="main">
@@ -98,6 +98,7 @@ const ogImage = new URL('/og.png', base).href;
     gap: var(--s4);
     background: var(--card);
     border: var(--border-w) solid var(--frame);
+    border-radius: var(--radius);
     view-transition-name: card;
   }
   main {

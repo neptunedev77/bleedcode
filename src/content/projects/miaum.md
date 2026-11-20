@@ -2,7 +2,7 @@
 name: miaUM
 slug: miaum
 tagline: Lost & found for the University of Minho.
-status: wip
+status: done
 repo: neptunedev77/miaUM
 stack: [next.js, postgresql, prisma]
 kind: personal
@@ -18,4 +18,4 @@ features:
 
 miaUM is a lost & found board for the University of Minho, where people can report items they have lost or found on campus.
 
-It is built with Next.js, PostgreSQL and Prisma. Work in progress.
+It is built with Next.js, PostgreSQL and Prisma.

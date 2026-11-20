@@ -2,7 +2,7 @@
 name: riffspace
 slug: riffspace
 tagline: Visual profile cards for metal fans and guitarists.
-status: wip
+status: done
 repo: neptunedev77/riffspace
 stack: [react, typescript]
 kind: personal
@@ -18,4 +18,4 @@ features:
 
 riffspace lets metal fans and guitarists put together visual profile cards.
 
-It is built with React and TypeScript. Work in progress.
+It is built with React and TypeScript.

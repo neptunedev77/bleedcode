@@ -8,6 +8,6 @@ const t = useStrings();
 const projects = await getProjects();
 ---
 
-<Card title={t.projects.title} description={t.projects.description}>
+<Card title={t.projects.tabTitle} description={t.projects.description}>
   <ProjectsBrowser projects={projects} title={t.projects.title} as="h1" />
 </Card>

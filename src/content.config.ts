@@ -9,7 +9,7 @@ const projects = defineCollection({
     name: z.string(),
     slug: z.string().regex(/^[a-z0-9-]+$/, 'lowercase letters, digits and dashes only'),
     tagline: z.string(),
-    status: z.enum(['live', 'wip', 'archived']),
+    status: z.enum(['live', 'done', 'wip']),
     /** Full URL of the deployed app, e.g. https://timemesh.bleedcode.space */
     url: z.url().optional(),
     /** GitHub "owner/name". */

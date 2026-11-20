@@ -2,7 +2,7 @@
 name: metal-shell
 slug: metal-shell
 tagline: Terminal collectible strategy game about metal bands.
-status: wip
+status: done
 repo: neptunedev77/metal-shell
 stack: [python]
 kind: personal

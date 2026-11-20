@@ -2,7 +2,7 @@
 name: TimeMesh
 slug: timemesh
 tagline: Finds the time slots a whole group has in common.
-status: wip
+status: done
 repo: neptunedev77/TimeMesh
 stack: [next.js, supabase]
 kind: personal
@@ -18,4 +18,4 @@ features:
 
 TimeMesh finds the time slots that a whole group has in common.
 
-It is built with Next.js on top of Supabase. Work in progress.
+It is built with Next.js on top of Supabase.

@@ -11,12 +11,12 @@ export const site = {
 
   /** Home hero: two headline lines and a short meta line. */
   hero: {
-    lines: ['Developer based in Braga.', 'My corner for code & side projects.'],
-    meta: 'MSc Computer Science and Engineering @ UMinho · Focused on Cloud, Networking & SRE',
+    lines: ['Solo developer lab in Braga.', 'My corner for code & side projects.'],
+    meta: 'Focused on Cloud, Networking, SRE & Web Tools',
   },
 
   /** Default meta / Open Graph description. */
-  description: 'bleedcode: projects and web apps by a developer based in Braga, Portugal.',
+  description: 'bleedcode: a solo developer lab in Braga, Portugal. Web apps, tools and side projects.',
 } as const;
 
 export type Site = typeof site;
