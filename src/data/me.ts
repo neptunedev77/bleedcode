@@ -7,20 +7,19 @@ export const about = [
   "Away from the terminal, you'll usually find me listening to metal, playing guitar, shooting photos, or stopping to pet random cats.",
 ];
 
-/** From the GitHub profile's tech stack. */
+/** Interests: at the keyboard, and away from it. */
 export const focus = [
-  'software development',
   'web apps',
   'cloud infrastructure',
   'containers & kubernetes',
-  'infrastructure as code',
   'ci/cd',
   'networking',
   'linux',
   'automation',
   'sre',
+  'homelab',
 ];
-export const offline = ['metal', 'guitar', 'photography', 'cats'];
+export const offline = ['metal', 'guitar', 'photography', 'cats', 'gaming', 'coffee', 'space', 'cars', 'traveling'];
 
 export interface EducationEntry {
   degree: string;
