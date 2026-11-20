@@ -21,11 +21,9 @@ interface Props {
   description?: string;
   /** Set false for pages that should not be indexed (404). */
   index?: boolean;
-  /** Scale the spacing to the screen height so the page fits without scrolling (home). */
-  fit?: boolean;
 }
 
-const { title, description = site.description, index = true, fit = false } = Astro.props;
+const { title, description = site.description, index = true } = Astro.props;
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${useStrings().home.title}`;
 const base = Astro.site ?? site.url;
 const canonical = new URL(Astro.url.pathname, base).href;
@@ -70,7 +68,7 @@ const ogImage = new URL('/og.png', base).href;
     <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
-    <div class:list={['page', { fit }]}>
+    <div class="page">
       <div class="card">
         <Blood kind="corner" scale={5} scaleSmall={3} top="calc(-1 * var(--frame-w))" left="calc(-1 * var(--frame-w))" />
         <Blood kind="smear" scale={4} scaleSmall={3} bottom="calc(-1 * var(--frame-w))" right="14%" />
@@ -124,20 +122,21 @@ const ogImage = new URL('/og.png', base).href;
     }
   }
 
-  /* fit (home, wide screens): the vertical spacing follows the screen height,
-     so the whole page fits in one screen with no scroll. The sizes only go
-     down on shorter screens; on tall ones they stay as designed. */
+  /* Wide screens: the vertical spacing follows the screen height (so the home
+     page fits in one screen with no scroll). It is the same on every page, so
+     the frame, logo and nav never move when you navigate. On tall screens the
+     sizes stay as designed. */
   @media (min-width: 561px) {
-    .fit {
+    .page {
       --page-pad-y: clamp(8px, 2.6vh, 24px);
       --fit-gap: clamp(16px, 3.8vh, 32px);
     }
-    .fit .card {
+    .card {
       --card-pad: clamp(24px, 5.6vh, 48px);
       --header-pad: clamp(12px, 2.8vh, 24px);
       gap: var(--fit-gap);
     }
-    .fit main {
+    main {
       gap: var(--fit-gap);
     }
   }
