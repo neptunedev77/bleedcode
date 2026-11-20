@@ -157,6 +157,10 @@ const [line1, line2] = site.hero.lines;
   }
 
   @media (max-width: 560px) {
+    /* the red line shrinks to fit one line here, so it needs the text-safe red */
+    .l2 {
+      color: var(--accent-text);
+    }
     .l1 {
       font-size: var(--s4);
     }

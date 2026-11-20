@@ -22,6 +22,7 @@
   --accent: #b8304a;
   --on-accent: #fff4f5;
   --accent-soft: rgb(184 48 74 / 0.14); /* hover wash */
+  --accent-text: #d84f67; /* red for small text: 4.7:1 on --card */
 
   /* blood (pixel-art stains) */
   --blood: #8e1b2b;
@@ -87,6 +88,7 @@
   --accent: #d92648;
   --on-accent: #ffffff;
   --accent-soft: rgb(217 38 72 / 0.1);
+  --accent-text: #c41a42; /* 5.4:1 on --card */
 
   --text-strong: #18181b;
   --text: #27272a;
