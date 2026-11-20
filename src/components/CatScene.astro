@@ -1,0 +1,125 @@
+---
+/**
+ * The cat as a small illustration: sitting on a pool of blood, with pixel
+ * sparkles, crosses, rings and dots floating around it. Decorative only.
+ * The shapes drift slowly (off under prefers-reduced-motion).
+ */
+import Mascot from './Mascot.astro';
+import Blood from './Blood.astro';
+
+const shapes = {
+  spark: ['...#...', '...#...', '..###..', '#######', '..###..', '...#...', '...#...'],
+  plus: ['..#..', '..#..', '#####', '..#..', '..#..'],
+  cross: ['#...#', '.#.#.', '..#..', '.#.#.', '#...#'],
+  ring: ['.###.', '#...#', '#...#', '#...#', '.###.'],
+  dot: ['##', '##'],
+} as const;
+
+type Kind = keyof typeof shapes;
+interface Bit {
+  kind: Kind;
+  x: string;
+  y: string;
+  /** px per pixel */
+  s: number;
+  tone: 'red' | 'grey' | 'light';
+  /** animation delay, so they don't move together */
+  d: string;
+}
+
+/* placed around the cat (the cat sits in the middle-bottom of the scene) */
+const bits: Bit[] = [
+  { kind: 'spark', x: '14%', y: '10%', s: 3, tone: 'red', d: '0s' },
+  { kind: 'ring', x: '78%', y: '6%', s: 3, tone: 'grey', d: '-1.2s' },
+  { kind: 'plus', x: '86%', y: '42%', s: 3, tone: 'red', d: '-2.4s' },
+  { kind: 'cross', x: '6%', y: '50%', s: 2, tone: 'grey', d: '-0.6s' },
+  { kind: 'dot', x: '24%', y: '34%', s: 3, tone: 'light', d: '-1.8s' },
+  { kind: 'dot', x: '70%', y: '26%', s: 2, tone: 'red', d: '-3s' },
+  { kind: 'spark', x: '90%', y: '74%', s: 2, tone: 'light', d: '-2s' },
+  { kind: 'ring', x: '10%', y: '80%', s: 2, tone: 'red', d: '-0.3s' },
+];
+
+const toPath = (rows: readonly string[]) =>
+  rows
+    .flatMap((row, y) => [...row].map((c, x) => (c === '#' ? `M${x} ${y}h1v1h-1z` : '')))
+    .join('');
+---
+
+<div class="scene" aria-hidden="true">
+  {
+    bits.map((b) => {
+      const rows = shapes[b.kind];
+      const w = rows[0].length;
+      const h = rows.length;
+      return (
+        <svg
+          class:list={['bit', b.tone]}
+          viewBox={`0 0 ${w} ${h}`}
+          width={w * b.s}
+          height={h * b.s}
+          shape-rendering="crispEdges"
+          focusable="false"
+          style={{ left: b.x, top: b.y, animationDelay: b.d }}
+        >
+          <path d={toPath(rows)} />
+        </svg>
+      );
+    })
+  }
+  <div class="cat">
+    <Blood kind="pool" scale={4} scaleSmall={3} bottom="-10px" left="-22%" />
+    <Mascot scale={4} scaleSmall={3} alt="" />
+  </div>
+</div>
+
+<style>
+  .scene {
+    position: relative;
+    width: 300px;
+    height: 250px;
+    flex: none;
+  }
+  .cat {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
+  }
+  .cat :global(.mascot) {
+    position: relative;
+    z-index: 2;
+  }
+  .bit {
+    position: absolute;
+    image-rendering: pixelated;
+  }
+  .red {
+    fill: var(--accent);
+  }
+  .grey {
+    fill: var(--line-strong);
+  }
+  .light {
+    fill: var(--text-soft);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .bit {
+      animation: drift 5s ease-in-out infinite;
+    }
+  }
+  @keyframes drift {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+  @media (max-width: 560px) {
+    .scene {
+      width: 240px;
+      height: 190px;
+    }
+  }
+</style>

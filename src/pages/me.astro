@@ -1,14 +1,13 @@
 ---
 import Card from '../layouts/Card.astro';
-import Chips from '../components/Chips.astro';
 import ActionLink from '../components/ActionLink.astro';
-import Mascot from '../components/Mascot.astro';
-import Blood from '../components/Blood.astro';
+import CatScene from '../components/CatScene.astro';
 import { site } from '../site.config';
 import { useStrings } from '../i18n';
 import { hello, about, focus, offline, education } from '../data/me';
 
 const t = useStrings();
+const hasLocalTitle = education.some((e) => e.localTitle);
 ---
 
 <Card title={t.me.title} description={t.me.description}>
@@ -19,10 +18,7 @@ const t = useStrings();
       {about.map((line) => <p class="about">{line}</p>)}
     </section>
 
-    <aside class="perch" aria-hidden="true">
-      <Blood kind="specks" scale={2} bottom="6px" left="-18px" />
-      <Mascot scale={2} scaleSmall={2} alt="" />
-    </aside>
+    <CatScene />
 
     <section class="block" aria-labelledby="edu-heading">
       <h2 id="edu-heading" class="label">{t.me.education}</h2>
@@ -37,6 +33,11 @@ const t = useStrings();
               </p>
               <h3 class="degree">
                 {e.degree}
+                {e.localTitle && (
+                  <sup class="star" aria-hidden="true">
+                    *
+                  </sup>
+                )}
                 {e.level && <span class="level">{e.level}</span>}
               </h3>
               <p class="school">
@@ -46,18 +47,26 @@ const t = useStrings();
           ))
         }
       </ol>
+      {
+        hasLocalTitle && (
+          <p class="note">
+            <span aria-hidden="true">* </span>
+            {t.me.localTitle} (<span lang="pt">Engenharia Informática</span>).
+          </p>
+        )
+      }
     </section>
 
     <section class="block" aria-labelledby="interests-heading">
       <h2 id="interests-heading" class="label">{t.me.interests}</h2>
       <div class="groups">
-        <div>
-          <h3 class="group">{t.me.focus}</h3>
-          <Chips items={focus} />
+        <div class="group">
+          <h3 class="group-title">{t.me.focus}</h3>
+          <ul class="tags">{focus.map((item) => <li>{item}</li>)}</ul>
         </div>
-        <div>
-          <h3 class="group">{t.me.offline}</h3>
-          <Chips items={offline} />
+        <div class="group">
+          <h3 class="group-title">{t.me.offline}</h3>
+          <ul class="tags">{offline.map((item) => <li>{item}</li>)}</ul>
         </div>
       </div>
     </section>
@@ -65,7 +74,7 @@ const t = useStrings();
     <section class="block" aria-labelledby="contact-heading">
       <h2 id="contact-heading" class="label">{t.me.contact}</h2>
       <div class="actions">
-        <ActionLink href={`mailto:${site.email}`} label={site.email} icon="mail" copy={site.email} />
+        <ActionLink label={site.email} icon="mail" copy={site.email} ariaLabel={`${site.email}: ${t.copy.label}`} />
         <ActionLink href={site.github} label={`github.com/${site.githubUser}`} icon="github" />
       </div>
     </section>
@@ -77,7 +86,7 @@ const t = useStrings();
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--s5) var(--s4);
-    align-items: end;
+    align-items: center;
   }
   .block {
     grid-column: 1 / -1;
@@ -111,13 +120,14 @@ const t = useStrings();
   }
   .about {
     color: var(--text);
+    text-align: justify;
+    hyphens: auto;
   }
-  /* a short ledge, so the cat sits on something */
-  .perch {
-    position: relative;
-    margin-right: var(--s3);
-    padding: 0 var(--s3);
-    border-bottom: var(--border-w) solid var(--line-strong);
+  /* narrow screens: justified text opens big gaps, so align left there */
+  @media (max-width: 560px) {
+    .about {
+      text-align: left;
+    }
   }
 
   /* education timeline */
@@ -146,6 +156,7 @@ const t = useStrings();
     padding: var(--s2);
     background: var(--inner);
     border: var(--border-w) solid var(--line);
+    border-radius: var(--radius-sm);
     transition: border-color var(--t-fast) var(--ease);
   }
   .timeline li:hover {
@@ -185,6 +196,10 @@ const t = useStrings();
     font-weight: 700;
     color: var(--text-strong);
   }
+  .star {
+    margin-left: 2px;
+    color: var(--accent);
+  }
   .level {
     margin-left: var(--s1);
     padding: 0 var(--s1);
@@ -197,18 +212,49 @@ const t = useStrings();
     font-size: var(--fs-sm);
     color: var(--text-soft);
   }
+  .note {
+    padding-left: var(--s4);
+    font-size: var(--fs-sm);
+    color: var(--dim);
+  }
 
-  /* interests */
+  /* interests: two boxes, tags on an even grid so the columns line up */
   .groups {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-    gap: var(--s3);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: var(--s2);
   }
   .group {
-    margin-bottom: var(--s1);
+    display: flex;
+    flex-direction: column;
+    gap: var(--s2);
+    padding: var(--s2);
+    background: var(--inner);
+    border: var(--border-w) solid var(--line);
+    border-radius: var(--radius-sm);
+  }
+  .group-title {
     font-size: var(--fs-sm);
     font-weight: 500;
     color: var(--muted);
+  }
+  .tags {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--s1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tags li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px var(--s1);
+    font-size: var(--fs-sm);
+    text-align: center;
+    color: var(--text-soft);
+    background: var(--tile);
   }
 
   .actions {
@@ -220,9 +266,10 @@ const t = useStrings();
   @media (max-width: 560px) {
     .me {
       grid-template-columns: 1fr;
+      justify-items: start;
     }
-    .perch {
-      display: none;
+    .me > :global(.scene) {
+      justify-self: center;
     }
     .timeline {
       padding-left: var(--s3);
@@ -234,6 +281,9 @@ const t = useStrings();
     }
     .timeline::before {
       left: 5px;
+    }
+    .note {
+      padding-left: var(--s3);
     }
   }
 </style>

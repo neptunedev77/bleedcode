@@ -26,6 +26,8 @@ export interface EducationEntry {
   degree: string;
   /** Small tag after the degree, e.g. "High School". */
   level?: string;
+  /** Marks the degree with * for the note under the timeline. */
+  localTitle?: boolean;
   school: string;
   place: string;
   start: number;
@@ -37,12 +39,14 @@ export interface EducationEntry {
 export const education: EducationEntry[] = [
   {
     degree: 'MSc in Computer Science and Engineering',
+    localTitle: true,
     school: 'University of Minho',
     place: 'Braga',
     start: 2026,
   },
   {
     degree: 'BSc in Computer Science and Engineering',
+    localTitle: true,
     school: 'UTAD',
     place: 'Vila Real',
     start: 2022,
