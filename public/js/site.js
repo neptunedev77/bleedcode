@@ -138,8 +138,8 @@
   /* ------------------------------------------------------------------
      3. Project filters ([data-browser]). Takes over from the CSS-only
         version so the change can run inside a view transition: cards that
-        leave fold shut and fade, cards that stay glide to their new place,
-        cards that come back unfold (styles in global.css).
+        leave fade out, cards that stay glide to their new place, cards that
+        come back fade in (styles in global.css).
      ------------------------------------------------------------------ */
   document.querySelectorAll('[data-browser]').forEach((browser) => {
     const items = [...browser.querySelectorAll(':scope > .grid > li')];
@@ -155,6 +155,7 @@
       if (empty) empty.hidden = shown > 0;
     };
     apply(browser.querySelector('input[type="radio"]:checked')?.value ?? 'all');
+    let running = null;
 
     browser.addEventListener('change', (event) => {
       const input = event.target;
@@ -163,6 +164,8 @@
         apply(input.value);
         return;
       }
+      // a new click while one is still animating: jump that one to its end
+      running?.skipTransition();
       items.forEach((li, i) => {
         li.style.viewTransitionName = `pcard-${i}`;
         li.style.viewTransitionClass = 'pcard';
@@ -171,9 +174,12 @@
       root.classList.add('filtering');
       const value = input.value;
       const transition = document.startViewTransition(() => apply(value));
+      running = transition;
       // whatever happens to the animation (skipped, interrupted), end in the right state
       transition.updateCallbackDone.catch(() => apply(value));
       transition.finished.finally(() => {
+        if (running !== transition) return; // a newer click owns the cleanup
+        running = null;
         apply(browser.querySelector('input[type="radio"]:checked')?.value ?? value);
         items.forEach((li) => {
           li.style.viewTransitionName = '';
