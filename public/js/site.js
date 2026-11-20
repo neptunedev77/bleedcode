@@ -193,7 +193,7 @@
   /* ------------------------------------------------------------------
      4. Theme toggle ([data-theme-toggle]). theme.js already applied the
         saved choice before paint; this shows the button and switches,
-        with a quick cross-fade of the whole page.
+        letting every colour ease into the new theme.
      ------------------------------------------------------------------ */
   const root = document.documentElement;
   const isLight = () => root.dataset.theme === 'light';
@@ -215,14 +215,11 @@
       } catch {
         /* storage blocked: the switch still works for this page */
       }
-      if (!document.startViewTransition || reduceMotion.matches) {
-        set();
-        return;
-      }
-      root.classList.add('theming');
-      const transition = document.startViewTransition(set);
-      transition.updateCallbackDone.catch(set);
-      transition.finished.finally(() => root.classList.remove('theming'));
+      // colours ease into the new theme for a moment (see .theme-anim in global.css)
+      root.classList.add('theme-anim');
+      set();
+      clearTimeout(button._themeTimer);
+      button._themeTimer = setTimeout(() => root.classList.remove('theme-anim'), 260);
     });
   });
 })();

@@ -293,24 +293,18 @@ html.filtering .card {
   }
 }
 
-/* Theme switch (site.js): a quick cross-fade of the whole page */
-html.theming * {
-  view-transition-name: none !important;
-}
-html.theming::view-transition-old(root) {
-  animation: theme-out 180ms ease-out both;
-}
-html.theming::view-transition-new(root) {
-  animation: theme-in 180ms ease-out both;
-}
-@keyframes theme-out {
-  to {
-    opacity: 0;
-  }
-}
-@keyframes theme-in {
-  from {
-    opacity: 0;
+/* Theme switch (site.js): for a moment, every colour eases into the new theme */
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-anim,
+  html.theme-anim *:not(.glyph),
+  html.theme-anim *::before,
+  html.theme-anim *::after {
+    transition:
+      background-color 200ms ease,
+      color 200ms ease,
+      border-color 200ms ease,
+      fill 200ms ease,
+      stroke 200ms ease !important;
   }
 }
 
