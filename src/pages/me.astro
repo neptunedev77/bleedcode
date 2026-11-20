@@ -1,6 +1,7 @@
 ---
 import Card from '../layouts/Card.astro';
 import ActionLink from '../components/ActionLink.astro';
+import Chips from '../components/Chips.astro';
 import CatScene from '../components/CatScene.astro';
 import { site } from '../site.config';
 import { useStrings } from '../i18n';
@@ -62,11 +63,11 @@ const hasLocalTitle = education.some((e) => e.localTitle);
       <div class="groups">
         <div class="group">
           <h3 class="group-title">{t.me.focus}</h3>
-          <ul class="tags">{focus.map((item) => <li>{item}</li>)}</ul>
+          <Chips items={focus} />
         </div>
         <div class="group">
           <h3 class="group-title">{t.me.offline}</h3>
-          <ul class="tags short">{offline.map((item) => <li>{item}</li>)}</ul>
+          <Chips items={offline} />
         </div>
       </div>
     </section>
@@ -218,11 +219,10 @@ const hasLocalTitle = education.some((e) => e.localTitle);
     color: var(--dim);
   }
 
-  /* interests: two columns, tags on an even grid so they line up */
+  /* interests: two groups of plain tags, side by side */
   .groups {
     display: grid;
-    /* the keyboard list is longer, so it gets more room */
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
     gap: var(--s3) var(--s4);
   }
   .group {
@@ -235,28 +235,6 @@ const hasLocalTitle = education.some((e) => e.localTitle);
     font-weight: 500;
     color: var(--muted);
   }
-  .tags {
-    --tag-min: 200px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--tag-min)), 1fr));
-    gap: var(--s1);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .tags.short {
-    --tag-min: 104px;
-  }
-  .tags li {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2px var(--s1);
-    font-size: var(--fs-sm);
-    text-align: center;
-    color: var(--text-soft);
-    background: var(--tile);
-  }
 
   .actions {
     display: flex;
@@ -264,11 +242,6 @@ const hasLocalTitle = education.some((e) => e.localTitle);
     gap: var(--s2);
   }
 
-  @media (max-width: 720px) {
-    .groups {
-      grid-template-columns: 1fr;
-    }
-  }
   @media (max-width: 560px) {
     .me {
       grid-template-columns: 1fr;
