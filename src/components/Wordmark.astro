@@ -1,0 +1,27 @@
+---
+/** "bleedcode" in IBM Plex Mono bold, with "code" in the accent colour. Same size on every page. */
+---
+
+<span class="wordmark">bleed<span class="code">code</span></span>
+
+<style>
+  .wordmark {
+    display: block;
+    font-family: var(--font);
+    font-size: var(--s4);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--text-strong);
+    white-space: nowrap;
+  }
+  .code {
+    color: var(--accent);
+  }
+  /* Narrow phones: smaller, but still the same on every page. */
+  @media (max-width: 400px) {
+    .wordmark {
+      font-size: var(--s3);
+    }
+  }
+</style>

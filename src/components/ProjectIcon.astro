@@ -1,0 +1,48 @@
+---
+/** Square project mark: a real logo if the project has one, otherwise its pixel icon at 4×. */
+import { iconPaths, type IconName } from '../lib/icons';
+
+interface Props {
+  icon: IconName;
+  logo?: string | undefined;
+}
+
+const { icon, logo } = Astro.props;
+const { main, second } = iconPaths(icon);
+---
+
+<span class="tile" aria-hidden="true">
+  {
+    logo ? (
+      <img src={logo} alt="" width="64" height="64" loading="lazy" decoding="async" />
+    ) : (
+      <svg width="64" height="64" viewBox="0 0 16 16" shape-rendering="crispEdges" focusable="false">
+        {second && <path class="second" d={second} />}
+        <path class="main" d={main} />
+      </svg>
+    )
+  }
+</span>
+
+<style>
+  .tile {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background: var(--tile);
+  }
+  img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+  }
+  .main {
+    fill: var(--icon);
+  }
+  .second {
+    fill: var(--icon-2);
+  }
+</style>

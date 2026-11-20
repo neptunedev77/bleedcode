@@ -1,104 +1,268 @@
 ---
 import Card from '../layouts/Card.astro';
+import ActionLink from '../components/ActionLink.astro';
+import Chips from '../components/Chips.astro';
+import CatScene from '../components/CatScene.astro';
 import { site } from '../site.config';
 import { useStrings } from '../i18n';
+import { hello, about, focus, offline, education } from '../data/me';
 
 const t = useStrings();
-
-/* Content for /me. Everything marked TODO still needs real text. */
-const bio = ['TODO: short bio (two or three sentences about who you are and what you build).'];
-const education = ['TODO: degree, university, years.'];
-const focus = ['cloud', 'networking', 'sre'];
+const hasLocalTitle = education.some((e) => e.localTitle);
 ---
 
 <Card title={t.me.title} description={t.me.description}>
-  <article class="me dashed-top" aria-labelledby="page-title">
-    <h1 id="page-title" class="label">{t.me.title}</h1>
-
-    <p class="name">{site.author}</p>
-
-    <section aria-labelledby="bio-heading">
-      <h2 id="bio-heading" class="sub pixel">{t.me.bio}</h2>
-      {bio.map((line) => <p>{line}</p>)}
+  <div class="me">
+    <section class="intro" aria-labelledby="page-title">
+      <h1 id="page-title" class="label">{t.me.title}</h1>
+      <p class="hello">{hello}</p>
+      {about.map((line) => <p class="about">{line}</p>)}
     </section>
 
-    <section aria-labelledby="edu-heading">
-      <h2 id="edu-heading" class="sub pixel">{t.me.education}</h2>
-      <ul>{education.map((line) => <li>{line}</li>)}</ul>
+    <CatScene />
+
+    <section class="block" aria-labelledby="edu-heading">
+      <h2 id="edu-heading" class="label">{t.me.education}</h2>
+      <ol class="timeline">
+        {
+          education.map((e) => (
+            <li class:list={{ current: !e.end }}>
+              <span class="node" aria-hidden="true" />
+              <p class="years">
+                {e.start} – {e.end ?? t.me.present}
+                {!e.end && <span class="now">{t.me.now}</span>}
+              </p>
+              <h3 class="degree">
+                {e.degree}
+                {e.localTitle && (
+                  <sup class="star" aria-hidden="true">
+                    *
+                  </sup>
+                )}
+                {e.level && <span class="level">{e.level}</span>}
+              </h3>
+              <p class="school">
+                {e.school} · {e.place}
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+      {
+        hasLocalTitle && (
+          <p class="note">
+            <span aria-hidden="true">* </span>
+            {t.me.localTitle} (<span lang="pt">Engenharia Informática</span>).
+          </p>
+        )
+      }
     </section>
 
-    <section aria-labelledby="focus-heading">
-      <h2 id="focus-heading" class="sub pixel">{t.me.focus}</h2>
-      <ul class="chips">{focus.map((item) => <li>{item}</li>)}</ul>
+    <section class="block" aria-labelledby="interests-heading">
+      <h2 id="interests-heading" class="label">{t.me.interests}</h2>
+      <div class="groups">
+        <div class="group">
+          <h3 class="group-title">{t.me.focus}</h3>
+          <Chips items={focus} />
+        </div>
+        <div class="group">
+          <h3 class="group-title">{t.me.offline}</h3>
+          <Chips items={offline} />
+        </div>
+      </div>
     </section>
 
-    <section aria-labelledby="contact-heading">
-      <h2 id="contact-heading" class="sub pixel">{t.me.contact}</h2>
-      <ul class="contact">
-        <li>
-          <span class="pixel">email</span>
-          <a class="link-under" href={`mailto:${site.email}`}>{site.email}</a>
-        </li>
-        <li>
-          <span class="pixel">github</span>
-          <a class="link-under" href={site.github}>github.com/{site.githubUser} ↗</a>
-        </li>
-      </ul>
+    <section class="block" aria-labelledby="contact-heading">
+      <h2 id="contact-heading" class="label">{t.me.contact}</h2>
+      <div class="actions">
+        <ActionLink label={site.email} icon="mail" copy={site.email} ariaLabel={`${site.email}: ${t.copy.label}`} />
+        <ActionLink href={site.github} label={`github.com/${site.githubUser}`} icon="github" />
+      </div>
     </section>
-  </article>
+  </div>
 </Card>
 
 <style>
   .me {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s5) var(--s4);
+    align-items: center;
+  }
+  .block {
+    grid-column: 1 / -1;
     display: flex;
     flex-direction: column;
-    gap: 26px;
-    padding-top: 26px;
+    gap: var(--s2);
   }
-  .me > * {
-    max-width: 68ch;
+
+  /* section labels get a small red pixel */
+  .label::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: var(--s1);
+    background: var(--accent);
+    vertical-align: 1px;
   }
-  .name {
-    font-size: 24px;
+
+  .intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s2);
+    max-width: 62ch;
+  }
+  .hello {
+    font-size: var(--fs-lg);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text-strong);
+  }
+  .about {
+    color: var(--text);
+    text-align: justify;
+    hyphens: auto;
+  }
+  /* narrow screens: justified text opens big gaps, so align left there */
+  @media (max-width: 560px) {
+    .about {
+      text-align: left;
+    }
+  }
+
+  /* education timeline */
+  .timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s3);
+    margin: 0;
+    padding: 0 0 0 var(--s4);
+    list-style: none;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 7px;
+    border-left: 2px dashed var(--line-strong);
+  }
+  .timeline li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--s2);
+    background: var(--inner);
+    border: var(--border-w) solid var(--line);
+    border-radius: var(--radius-sm);
+    transition: border-color var(--t-fast) var(--ease);
+  }
+  .timeline li:hover {
+    border-color: var(--line-strong);
+  }
+  .node {
+    position: absolute;
+    top: 20px;
+    left: calc(-1 * var(--s4));
+    width: 16px;
+    height: 16px;
+    background: var(--card);
+    border: 2px solid var(--line-strong);
+  }
+  .current {
+    border-color: var(--accent) !important;
+  }
+  .current .node {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .years {
+    display: flex;
+    align-items: center;
+    gap: var(--s1);
+    font-size: var(--fs-sm);
+    color: var(--muted);
+  }
+  .now {
+    padding: 0 var(--s1);
+    font-weight: 700;
+    color: var(--on-accent);
+    background: var(--accent);
+  }
+  .degree {
+    font-size: var(--fs-md);
     font-weight: 700;
     color: var(--text-strong);
   }
-  section {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  .star {
+    margin-left: 2px;
+    color: var(--accent);
   }
-  .sub {
-    font-size: 13px;
-    color: var(--text-strong);
+  .level {
+    margin-left: var(--s1);
+    padding: 0 var(--s1);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--text-soft);
+    border: var(--border-w) solid var(--line-strong);
   }
-  ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .chips {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .chips li {
-    font-size: 12px;
-    padding: 1px 7px;
-    background: var(--chip);
+  .school {
+    font-size: var(--fs-sm);
     color: var(--text-soft);
   }
-  .contact li {
+  .note {
+    padding-left: var(--s4);
+    font-size: var(--fs-sm);
+    color: var(--dim);
+  }
+
+  /* interests: two groups of plain tags, side by side */
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: var(--s3) var(--s4);
+  }
+  .group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s1);
+  }
+  .group-title {
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    color: var(--muted);
+  }
+
+  .actions {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
-    gap: 4px 14px;
+    gap: var(--s2);
   }
-  .contact .pixel {
-    min-width: 70px;
-    font-size: 11px;
-    color: var(--muted);
+
+  @media (max-width: 560px) {
+    .me {
+      grid-template-columns: 1fr;
+      justify-items: start;
+    }
+    .me > :global(.scene) {
+      justify-self: center;
+    }
+    .timeline {
+      padding-left: var(--s3);
+    }
+    .node {
+      left: calc(-1 * var(--s3));
+      width: 12px;
+      height: 12px;
+    }
+    .timeline::before {
+      left: 5px;
+    }
+    .note {
+      padding-left: var(--s3);
+    }
   }
 </style>

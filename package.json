@@ -13,11 +13,13 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.7.6",
     "@fontsource/ibm-plex-mono": "^5.3.0",
-    "@fontsource/silkscreen": "^5.3.0",
     "astro": "^7.4.13"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
     "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22.23.4"
   }
 }

@@ -1,0 +1,137 @@
+---
+/**
+ * A small labelled button-link with red pixel corner brackets and an icon
+ * that nudges on hover. Used for "visit" on live cards and for contact links.
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  /** Link target; not needed when `copy` is set. */
+  href?: string;
+  /** Visible text; omit for a compact icon-only button (then ariaLabel is required). */
+  label?: string;
+  icon: 'external' | 'mail' | 'github' | 'arrow';
+  /** Accessible name when the visible label needs more context (must start with the label). */
+  ariaLabel?: string;
+  external?: boolean;
+  /** Copy this text on click instead of linking (renders a <button>; see CopyEmail). */
+  copy?: string;
+  /** Draw the red border from the pointer's entry point on hover (default true).
+      Off for buttons inside cards, where it competes with the card's own trace. */
+  trace?: boolean;
+  class?: string;
+}
+
+const { href, label, icon, ariaLabel, external = false, copy, trace = true, class: className } = Astro.props;
+const traceAttr = trace ? '' : undefined;
+const compact = !label;
+---
+
+{
+  copy ? (
+    <button type="button" class:list={['action', { compact }, className]} aria-label={ariaLabel} data-copy={copy} data-trace={traceAttr}>
+      {label && <span class="text">{label}</span>}
+      <span class="icon">
+        <Icon name={icon} size={14} />
+      </span>
+    </button>
+  ) : (
+    <a
+      class:list={['action', { compact }, className]}
+      href={href}
+      aria-label={ariaLabel}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener' : undefined}
+      data-trace={traceAttr}
+    >
+      {label && <span class="text">{label}</span>}
+      <span class="icon">
+        <Icon name={icon} size={14} />
+      </span>
+    </a>
+  )
+}
+
+<style>
+  .action {
+    font: inherit;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s1);
+    padding: 4px 10px;
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--inner);
+    border: var(--border-w) solid var(--line-strong);
+  }
+  /* red pixel brackets on two opposite corners */
+  .action::before,
+  .action::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border: 2px solid var(--accent);
+    transition: transform var(--t-fast) var(--ease);
+  }
+  .action::before {
+    top: -3px;
+    left: -3px;
+    border-right: 0;
+    border-bottom: 0;
+  }
+  .action::after {
+    right: -3px;
+    bottom: -3px;
+    border-left: 0;
+    border-top: 0;
+  }
+  .icon {
+    display: flex;
+    color: var(--accent);
+    transition: transform var(--t-fast) var(--ease);
+  }
+  .action:hover {
+    color: var(--text-strong);
+    background: var(--accent-soft);
+  }
+  /* no trace (inside cards, or no script): the border simply turns red */
+  .action:not([data-trace]):hover,
+  :global(html:not(.has-trace)) .action:hover {
+    border-color: var(--accent);
+  }
+  .action:hover::before {
+    transform: translate(-2px, -2px);
+  }
+  .action:hover::after {
+    transform: translate(2px, 2px);
+  }
+  .action:hover .icon {
+    transform: translate(2px, -2px);
+  }
+
+  /* compact: a small square with the icon only and tighter brackets */
+  .compact {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    justify-content: center;
+    color: var(--text-soft);
+  }
+  .compact::before,
+  .compact::after {
+    width: 4px;
+    height: 4px;
+  }
+  .compact .icon {
+    color: inherit;
+  }
+  .compact:hover .icon {
+    transform: none;
+  }
+</style>

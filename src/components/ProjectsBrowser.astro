@@ -1,0 +1,158 @@
+---
+/**
+ * Heading + quick status filters (all · live · done · wip) + project grid.
+ * The filters are plain radio buttons and work with CSS alone (:has). When
+ * public/js/site.js runs, it takes over ([data-js]) and animates the change
+ * with a view transition.
+ * `viewAll` adds an "all projects (n) →" link next to the heading; the count
+ * tells there is more than what is shown.
+ */
+import type { Project } from '../lib/projects';
+import { useStrings } from '../i18n';
+import ProjectGrid from './ProjectGrid.astro';
+
+interface Props {
+  projects: Project[];
+  title: string;
+  /** h1 on /projects, h2 on the home page. */
+  as?: 'h1' | 'h2';
+  /** Unique per page, for the radio group. */
+  id?: string;
+  /** Show the status filters (default true). */
+  filters?: boolean;
+  /** "all projects →" link on the right of the heading. */
+  viewAll?: { href: string; label: string };
+}
+
+const t = useStrings();
+const { projects, title, as: Heading = 'h2', id = 'projects', filters: showFilters = true, viewAll } = Astro.props;
+const statuses = ['live', 'done', 'wip'] as const;
+const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => ({ value: s, label: t.status[s] }))];
+---
+
+<section class="browser" aria-labelledby={`${id}-title`} data-browser>
+  <div class="head">
+    <Heading id={`${id}-title`} class="label">{title}</Heading>
+    {
+      showFilters && (
+        <fieldset class="filters">
+          <legend class="visually-hidden">{t.filters.legend}</legend>
+          {filters.map((f, i) => (
+            <>
+              {i > 0 && (
+                <span class="sep" aria-hidden="true">
+                  ·
+                </span>
+              )}
+              <input
+                class="visually-hidden"
+                type="radio"
+                name={`${id}-filter`}
+                id={`${id}-f-${f.value}`}
+                value={f.value}
+                checked={f.value === 'all'}
+              />
+              <label for={`${id}-f-${f.value}`}>{f.label}</label>
+            </>
+          ))}
+        </fieldset>
+      )
+    }
+    {
+      viewAll && (
+        <a class="link view-all" href={viewAll.href}>
+          {viewAll.label}
+        </a>
+      )
+    }
+  </div>
+
+  <ProjectGrid projects={projects} headingLevel={Heading === 'h1' ? 2 : 3} />
+  {showFilters && <p class="empty" data-empty hidden>{t.projects.empty}</p>}
+
+</section>
+
+<style>
+  .browser {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s2);
+  }
+  .head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--s1) var(--s3);
+  }
+  .view-all {
+    margin-left: auto;
+    font-size: var(--fs-sm);
+  }
+
+  .filters {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s1);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: var(--fs-sm);
+  }
+  .sep {
+    color: var(--dim);
+  }
+  label {
+    position: relative;
+    cursor: pointer;
+    color: var(--dim);
+    transition: color var(--t-fast) var(--ease);
+  }
+  /* the active filter's red underline grows from the left */
+  label::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 260ms var(--ease);
+  }
+  label:hover {
+    color: var(--text-strong);
+  }
+  input:checked + label {
+    color: var(--text-strong);
+  }
+  input:checked + label::after {
+    transform: scaleX(1);
+  }
+  input:focus-visible + label {
+    outline: 2px solid var(--text-strong);
+    outline-offset: 3px;
+  }
+
+  .empty {
+    padding: var(--s4) var(--s3);
+    font-size: var(--fs-sm);
+    text-align: center;
+    color: var(--dim);
+    border: var(--border-w) dashed var(--line-strong);
+    border-radius: var(--radius-sm);
+  }
+
+  /* the filtering itself, when site.js is not running */
+  .browser:not([data-js]):has(input[value='live']:checked) :global(.grid > li:not([data-status='live'])),
+  .browser:not([data-js]):has(input[value='done']:checked) :global(.grid > li:not([data-status='done'])),
+  .browser:not([data-js]):has(input[value='wip']:checked) :global(.grid > li:not([data-status='wip'])) {
+    display: none;
+  }
+  .browser:not([data-js]):has(input[value='live']:checked):not(:has(.grid > li[data-status='live'])) .empty,
+  .browser:not([data-js]):has(input[value='done']:checked):not(:has(.grid > li[data-status='done'])) .empty,
+  .browser:not([data-js]):has(input[value='wip']:checked):not(:has(.grid > li[data-status='wip'])) .empty {
+    display: block !important;
+  }
+
+</style>

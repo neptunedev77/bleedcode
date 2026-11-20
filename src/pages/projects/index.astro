@@ -1,6 +1,6 @@
 ---
 import Card from '../../layouts/Card.astro';
-import ProjectGrid from '../../components/ProjectGrid.astro';
+import ProjectsBrowser from '../../components/ProjectsBrowser.astro';
 import { getProjects } from '../../lib/projects';
 import { useStrings } from '../../i18n';
 
@@ -8,18 +8,6 @@ const t = useStrings();
 const projects = await getProjects();
 ---
 
-<Card title={t.projects.title} description={t.projects.description}>
-  <section class="page dashed-top" aria-labelledby="page-title">
-    <h1 id="page-title" class="label">{t.projects.title}</h1>
-    <ProjectGrid projects={projects} headingLevel={2} />
-  </section>
+<Card title={t.projects.tabTitle} description={t.projects.description}>
+  <ProjectsBrowser projects={projects} title={t.projects.title} as="h1" />
 </Card>
-
-<style>
-  .page {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding-top: 26px;
-  }
-</style>

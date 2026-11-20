@@ -1,27 +1,22 @@
 /**
- * Site-wide settings and placeholders. Edit here, not in components.
+ * Site-wide settings. Edit here, not in components.
  * Translatable UI strings live in `src/i18n/`.
  */
 export const site = {
   name: 'bleedcode',
   url: 'https://bleedcode.space',
-  author: 'António Sousa',
   email: 'contact@bleedcode.space',
   github: 'https://github.com/neptunedev77',
   githubUser: 'neptunedev77',
 
-  /** Subtitle under the name on the home page. First line is a placeholder. */
-  subtitle: ['TODO: title', 'cloud · networking · sre'],
-
-  /** Small captions in the top corners of the card (left, centre, right). */
-  captions: {
-    left: ['independent', 'web studio'],
-    center: ['one app.', 'one subdomain.'],
-    right: ['braga,', 'portugal'],
+  /** Home hero: two headline lines and a short meta line. */
+  hero: {
+    lines: ['Solo developer lab in Braga.', 'My corner for code & side projects.'],
+    meta: 'Focused on Cloud, Networking, SRE & Web Tools',
   },
 
-  description:
-    'bleedcode is the independent web studio of António Sousa: small, focused web apps, each on its own subdomain.',
+  /** Default meta / Open Graph description. */
+  description: 'bleedcode: a solo developer lab in Braga, Portugal. Web apps, tools and side projects.',
 } as const;
 
 export type Site = typeof site;

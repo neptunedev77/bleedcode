@@ -1,76 +1,108 @@
 ---
-import type { Project } from '../lib/projects';
-import { cardStains } from '../lib/stains';
-import Stain from './Stain.astro';
-import ProjectLogo from './ProjectLogo.astro';
+/**
+ * Project card. The project name is the main link and is stretched over the
+ * whole card. Live projects also get a "visit" button in the title row
+ * (a sibling link, never nested in the main one) and a splash of blood.
+ */
+import { repoUrl, type Project } from '../lib/projects';
+import { useStrings } from '../i18n';
+import ProjectIcon from './ProjectIcon.astro';
 import StatusBadge from './StatusBadge.astro';
 import Chips from './Chips.astro';
+import ActionLink from './ActionLink.astro';
+import Blood from './Blood.astro';
 
 interface Props {
   project: Project;
-  /** Position in the grid; picks a different stain for each card. */
-  index: number;
   headingLevel?: 2 | 3;
 }
 
-const { project, index, headingLevel = 3 } = Astro.props;
+const t = useStrings();
+const { project, headingLevel = 3 } = Astro.props;
 const p = project.data;
-const stains = cardStains[index % cardStains.length] ?? [];
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const live = p.status === 'live' && p.url ? p.url : undefined;
+const repo = !live && p.repo ? repoUrl(p.repo) : undefined;
 ---
 
-<a class="card px-border" href={`/projects/${p.slug}`}>
-  {stains.map((s) => <Stain {...s} />)}
-  <ProjectLogo name={p.name} monogram={p.monogram} logo={p.logo} live={p.status === 'live'} />
+<article class:list={['card', { live }]} data-trace>
+  {live && <Blood kind="corner" scale={3} bottom="-1px" right="-1px" flip="xy" radius="var(--radius-sm)" />}
+  <ProjectIcon icon={p.icon} logo={p.logo} />
   <div class="body">
     <div class="title">
-      <Heading class="name">{p.name}</Heading>
+      <Heading class="name">
+        <a class="main" href={`/projects/${p.slug}`}>{p.name}</a>
+      </Heading>
       <StatusBadge status={p.status} />
+      {live && <ActionLink class="visit" href={live} label="visit" icon="external" ariaLabel={t.projects.openLive(p.name)} external trace={false} />}
+      {repo && <ActionLink class="visit" href={repo} icon="github" ariaLabel={t.projects.openRepo(p.name)} external trace={false} />}
     </div>
     <p class="tagline">{p.tagline}</p>
-    <Chips items={p.stack} />
+    <Chips items={p.stack} max={2} />
   </div>
-</a>
+</article>
 
 <style>
   .card {
     position: relative;
     display: flex;
-    align-items: stretch;
+    align-items: flex-start;
+    gap: var(--s2);
+    height: 100%;
+    padding: var(--s2);
     background: var(--inner);
-    color: var(--text);
+    border: var(--border-w) solid var(--line);
+    border-radius: var(--radius-sm);
+    transition:
+      border-color var(--t-fast) var(--ease),
+      background-color var(--t-fast) var(--ease);
   }
-  .card:hover {
-    --px-c: var(--border-light);
-    color: var(--text);
+  /* without the script, hover just turns the border red; with it, site.js draws it */
+  :global(html:not(.has-trace)) .card:has(.main:hover) {
+    border-color: var(--accent);
   }
-  .card > :global(.cell) {
-    border-right: 3px solid var(--border);
+  .card:has(.main:hover) {
+    background: color-mix(in srgb, var(--inner), white 2%);
   }
+  .card:has(.main:focus-visible) {
+    outline: 2px solid var(--text-strong);
+    outline-offset: 3px;
+  }
+
+  /* the name link covers the whole card */
+  .main::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .main:focus-visible {
+    outline: none;
+  }
+
   .body {
     flex: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 6px;
-    padding: 12px 16px;
+    gap: var(--s1);
   }
   .title {
     display: flex;
-    align-items: center;
     flex-wrap: wrap;
-    gap: 4px 10px;
+    align-items: center;
+    gap: var(--s1) var(--s2);
+  }
+  .title :global(.visit) {
+    margin-left: auto;
   }
   .name {
-    font-size: 16px;
+    font-size: var(--fs-md);
     font-weight: 700;
-    line-height: 1.55;
+    line-height: 1.5;
     color: var(--text-strong);
   }
   .tagline {
-    font-size: 14px;
-    line-height: 1.45;
+    font-size: var(--fs-sm);
     color: var(--text-soft);
   }
 </style>

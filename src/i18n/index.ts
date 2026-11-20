@@ -11,9 +11,9 @@ export function useStrings(locale: Locale = defaultLocale): Strings {
   return dictionaries[locale];
 }
 
-/** Formats the build date as dd/mm/yyyy, matching the mockup. */
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/** Formats a date as "19 Nov 2026" (UTC, so the build machine's timezone doesn't matter). */
 export function formatDate(date: Date): string {
-  const dd = String(date.getUTCDate()).padStart(2, '0');
-  const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
-  return `${dd}/${mm}/${date.getUTCFullYear()}`;
+  return `${date.getUTCDate()} ${MONTHS[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
 }

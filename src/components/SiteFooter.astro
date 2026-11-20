@@ -6,16 +6,14 @@ const t = useStrings();
 const built = new Date();
 ---
 
-<footer class="footer dashed-top pixel">
-  <span>
-    © {built.getUTCFullYear()} {site.name} · <a class="mail" href={`mailto:${site.email}`}>{site.email}</a>
-  </span>
-  <span class="meta">
-    <span>{t.footer.updated} <time datetime={built.toISOString().slice(0, 10)}>{formatDate(built)}</time></span>
-    <!-- Placeholders: language switch and theme toggle are not in v1. -->
-    <span title={t.footer.soon}>{t.footer.pt}</span>
-    <span title={t.footer.soon}>{t.footer.theme}</span>
-  </span>
+<footer class="footer">
+  <button type="button" class="link copy" data-copy={site.email} aria-label={`${site.email}: ${t.copy.label}`}>
+    {site.email}
+  </button>
+  <p class="updated">
+    <span class="pulse" aria-hidden="true"></span>
+    {t.footer.updated}{' '}<time datetime={built.toISOString().slice(0, 10)}>{formatDate(built)}</time>
+  </p>
 </footer>
 
 <style>
@@ -23,20 +21,52 @@ const built = new Date();
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s1) var(--s3);
+    padding-top: var(--s3);
+    border-top: var(--border-w) solid var(--line);
+    font-size: var(--fs-sm);
+  }
+  .updated {
+    display: inline-flex;
     align-items: center;
-    gap: 12px;
-    padding-top: 18px;
-    font-size: 11px;
-    color: var(--muted);
+    gap: var(--s1);
+    color: var(--dim);
   }
-  .mail {
-    font-family: var(--font-mono);
-    font-size: 13px;
-    color: var(--text);
+
+  /* a small pixel dot (corners cut) with a slow halo: the site is alive */
+  .pulse {
+    position: relative;
+    flex: none;
+    width: 8px;
+    height: 8px;
   }
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
+  /* ::before is the dot, ::after the halo (siblings, so the halo isn't clipped) */
+  .pulse::before,
+  .pulse::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    clip-path: var(--pixel-dot);
+  }
+  .pulse::after {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .pulse::after {
+      animation: halo 3s ease-out infinite;
+    }
+  }
+  @keyframes halo {
+    0% {
+      opacity: 0.55;
+      transform: scale(1);
+    }
+    60%,
+    100% {
+      opacity: 0;
+      transform: scale(3);
+    }
   }
 </style>

@@ -1,102 +1,143 @@
 ---
 /**
- * The one layout: page shell, centered card with its frame stains,
- * header, page content and footer.
+ * The one layout: page shell, centered card, header, page content and footer.
  */
 import '@fontsource/ibm-plex-mono/500.css';
-import '@fontsource/ibm-plex-mono/600.css';
 import '@fontsource/ibm-plex-mono/700.css';
-import '@fontsource/silkscreen/400.css';
+import plex500 from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2?url';
+import plex700 from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-700-normal.woff2?url';
 import '../styles/global.css';
 
 import { site } from '../site.config';
-import { defaultLocale } from '../i18n';
-import { frameStains } from '../lib/stains';
-import Stain from '../components/Stain.astro';
+import { defaultLocale, useStrings } from '../i18n';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import Blood from '../components/Blood.astro';
+import CopyEmail from '../components/CopyEmail.astro';
 
 interface Props {
   /** Page title; the site name is appended. Omit on the home page. */
   title?: string;
   description?: string;
-  variant?: 'home' | 'compact';
   /** Set false for pages that should not be indexed (404). */
   index?: boolean;
 }
 
-const { title, description = site.description, variant = 'compact', index = true } = Astro.props;
-const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · independent web studio`;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url).href;
+const { title, description = site.description, index = true } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${useStrings().home.title}`;
+const base = Astro.site ?? site.url;
+const canonical = new URL(Astro.url.pathname, base).href;
+const ogImage = new URL('/og.png', base).href;
 ---
 
 <!doctype html>
 <html lang={defaultLocale}>
   <head>
     <meta charset="utf-8" />
+    <!-- saved theme, applied before first paint -->
+    <script is:inline src="/js/theme.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta name="author" content={site.author} />
-    <meta name="theme-color" content="#0b0b0d" />
+    <meta name="theme-color" content="#000000" />
     <meta name="color-scheme" content="dark" />
     {!index && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta name="generator" content={Astro.generator} />
+    <!-- load the two text weights up front so text doesn't swap fonts on load -->
+    <link rel="preload" href={plex500} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={plex700} as="font" type="font/woff2" crossorigin />
+    <!-- prerender same-site pages on hover/press so navigation is instant (Chromium; ignored elsewhere) -->
+    <script is:inline src="/js/site.js" defer></script>
+    <script is:inline type="speculationrules">
+      { "prerender": [{ "where": { "href_matches": "/*" }, "eagerness": "moderate" }] }
+    </script>
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="The bleedcode cat on a dark background" />
     <meta property="og:locale" content="en_GB" />
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div class="page">
-      <div class="card px-border">
-        {frameStains.map((s) => <Stain {...s} />)}
-        <SiteHeader variant={variant} />
+      <div class="card">
+        <Blood kind="corner" scale={5} scaleSmall={3} top="calc(-1 * var(--frame-w))" left="calc(-1 * var(--frame-w))" />
+        <Blood kind="smear" scale={4} scaleSmall={3} bottom="calc(-1 * var(--frame-w))" right="14%" />
+        <SiteHeader />
         <main id="main">
           <slot />
         </main>
         <SiteFooter />
       </div>
     </div>
+    <CopyEmail />
   </body>
 </html>
 
 <style>
   .page {
-    min-height: 100vh;
-    padding: 64px 20px 56px;
+    --page-pad-y: var(--s3);
+    padding: var(--page-pad-y) var(--s2);
   }
   .card {
-    --px-w: 4px;
-    --px-c: var(--border-light);
-    --px-drop: 12px 12px 0 0 var(--shadow);
     position: relative;
     max-width: var(--card-max);
+    /* always fill the viewport, so the frame doesn't jump between pages */
+    min-height: calc(100dvh - 2 * var(--page-pad-y));
     margin: 0 auto;
-    padding: 26px var(--card-pad-x) 24px;
+    padding: var(--card-pad);
     display: flex;
     flex-direction: column;
-    gap: 34px;
+    gap: var(--s4);
+    /* a square 2px frame. The stains sit on top of the border, aligned to its
+       outer edge, so the line runs straight into the blood (no step, and no
+       pixel outside the frame) */
     background: var(--card);
+    border: var(--frame-w) solid var(--frame);
+    view-transition-name: card;
   }
   main {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 34px;
+    gap: var(--s4);
+    view-transition-name: page;
+  }
+  .card > :global(footer) {
+    view-transition-name: site-footer;
   }
   @media (max-width: 560px) {
     .page {
-      padding: 32px 14px 40px;
+      --page-pad-y: var(--s2);
+      padding-inline: var(--s1);
+    }
+  }
+
+  /* Wide screens: the vertical spacing follows the screen height (so the home
+     page fits in one screen with no scroll). It is the same on every page, so
+     the frame, logo and nav never move when you navigate. On tall screens the
+     sizes stay as designed. */
+  @media (min-width: 561px) {
+    .page {
+      --page-pad-y: clamp(8px, 2.6vh, 24px);
+      --fit-gap: clamp(16px, 3.8vh, 32px);
     }
     .card {
-      --px-drop: 6px 6px 0 0 var(--shadow);
+      --card-pad: clamp(24px, 5.6vh, 48px);
+      --header-pad: clamp(12px, 2.8vh, 24px);
+      gap: var(--fit-gap);
+    }
+    main {
+      gap: var(--fit-gap);
     }
   }
 </style>

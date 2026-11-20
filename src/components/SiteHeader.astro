@@ -1,136 +1,195 @@
 ---
 /**
- * Card header. `home` shows the big name, subtitle, nav tiles and the cat
- * sitting on the divider. `compact` (sub-pages) shows a smaller brand link and the nav.
+ * The one header, identical on every page: wordmark (always the same size),
+ * text nav with an active state, and square icon buttons (GitHub, contact).
+ * It keeps its place during page transitions (view-transition-name).
  */
 import { site } from '../site.config';
-import Captions from './Captions.astro';
-import NavTiles from './NavTiles.astro';
-import Mascot from './Mascot.astro';
-import Stain from './Stain.astro';
+import { useStrings } from '../i18n';
+import Wordmark from './Wordmark.astro';
+import Icon from './Icon.astro';
 
-interface Props {
-  variant?: 'home' | 'compact';
-}
+const t = useStrings();
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 
-const { variant = 'compact' } = Astro.props;
+const links = [
+  { href: '/', label: t.nav.home, match: (p: string) => p === '/' },
+  { href: '/projects', label: t.nav.projects, match: (p: string) => p === '/projects' || p.startsWith('/projects/') },
+  { href: '/me', label: t.nav.me, match: (p: string) => p === '/me' },
+];
 ---
 
-<header class:list={['header', variant]}>
-  <Captions />
-  {
-    variant === 'home' ? (
-      <div class="hero">
-        <div class="intro">
-          <h1 class="brand">
-            bleed<span class="accent">code</span>
-          </h1>
-          <p class="subtitle pixel">
-            {site.subtitle.map((line, i) => (i ? [<br />, line] : line))}
-          </p>
-          <div class="nav">
-            <NavTiles />
-          </div>
-        </div>
-        <div class="perch">
-          <Stain kind="puddle" scale={3} bottom="-6px" left="-22px" />
-          <Mascot scale={3} />
-        </div>
-      </div>
-    ) : (
-      <div class="bar">
-        <a class="brand small" href="/">
-          bleed<span class="accent">code</span>
-          <span class="visually-hidden"> home</span>
-        </a>
-        <NavTiles />
-      </div>
-    )
-  }
+<header class="header">
+  <a class="logo" href="/" aria-label={t.nav.logo}>
+    <Wordmark />
+  </a>
+
+  <nav aria-label={t.nav.label}>
+    <ul>
+      {
+        links.map((l) => {
+          const active = l.match(path);
+          const current = active ? (path === l.href ? 'page' : 'true') : undefined;
+          return (
+            <li>
+              <a class:list={['nav-link', { active }]} href={l.href} aria-current={current}>
+                {l.label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </nav>
+
+  <div class="actions">
+    <button
+      type="button"
+      class="icon-btn theme"
+      aria-label={t.nav.toLight}
+      data-theme-toggle
+      data-to-light={t.nav.toLight}
+      data-to-dark={t.nav.toDark}
+      data-trace
+      hidden
+    >
+      <span class="glyph sun"><Icon name="sun" /></span>
+      <span class="glyph moon"><Icon name="moon" /></span>
+    </button>
+    <span class="divider" aria-hidden="true"></span>
+    <a class="icon-btn" href={site.github} aria-label={t.nav.github} data-trace>
+      <Icon name="github" />
+    </a>
+    <button type="button" class="icon-btn" aria-label={t.nav.contact} data-copy={site.email} data-trace>
+      <Icon name="mail" />
+    </button>
+  </div>
 </header>
 
 <style>
   .header {
-    display: flex;
-    flex-direction: column;
-    gap: 34px;
+    view-transition-name: site-header;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas: 'logo nav actions';
+    align-items: center;
+    gap: var(--s2) var(--s4);
+    padding-bottom: var(--header-pad, var(--s3));
+    border-bottom: var(--border-w) solid var(--line);
   }
-  .brand {
-    font-family: var(--font-mono);
-    font-size: 64px;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.04em;
+
+  .logo {
+    grid-area: logo;
+    display: flex;
+    align-items: center;
+    height: 40px;
+  }
+
+  nav {
+    grid-area: nav;
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s1) var(--s3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .nav-link {
+    color: var(--text-soft);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
+  }
+  .nav-link:hover {
+    color: var(--text-strong);
+    text-decoration-color: var(--accent);
+  }
+  .nav-link.active {
+    color: var(--text-strong);
+    text-decoration-color: var(--text-strong);
+  }
+
+  .actions {
+    grid-area: actions;
+    display: flex;
+    gap: var(--s1);
+  }
+  /* theme toggle: sun in dark mode (go light), moon in light mode.
+     Both are stacked; the one not in use is turned away and faded out. */
+  .theme {
+    position: relative;
+    overflow: hidden;
+  }
+  .glyph {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      transform 240ms var(--ease),
+      opacity 180ms var(--ease);
+  }
+  .moon {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+  }
+  :global(html[data-theme='light']) .theme .sun {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
+  }
+  :global(html[data-theme='light']) .theme .moon {
+    opacity: 1;
+    transform: none;
+  }
+  .theme:hover .sun {
+    transform: rotate(45deg);
+  }
+  :global(html[data-theme='light']) .theme:hover .moon {
+    transform: rotate(-15deg);
+  }
+
+  /* a thin line between the theme switch and the links */
+  .divider {
+    align-self: center;
+    width: 1px;
+    height: 24px;
+    margin: 0 var(--s1);
+    background: var(--line-strong);
+    opacity: 0.6;
+  }
+  .theme[hidden] + .divider {
+    display: none;
+  }
+  .icon-btn {
+    padding: 0;
+    font: inherit;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--text-soft);
+    border: var(--border-w) solid var(--line-strong);
+  }
+  .icon-btn:hover {
     color: var(--text-strong);
   }
-  .brand.small {
-    font-size: 40px;
-  }
-  .accent {
-    color: var(--accent);
+  :global(html:not(.has-trace)) .icon-btn:hover {
+    border-color: var(--accent);
   }
 
-  /* home */
-  .home {
-    /* the hero's bottom edge is the projects divider */
-    margin-bottom: -34px;
-  }
-  .hero {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 32px;
-  }
-  .intro {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    padding-bottom: 30px;
-  }
-  .subtitle {
-    font-size: 13px;
-    line-height: 1.7;
-    color: var(--text-soft);
-  }
-  .nav {
-    padding-top: 14px;
-  }
-  .perch {
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    margin-right: 24px;
-    margin-left: auto;
-  }
-  .perch :global(.mascot) {
-    position: relative;
-    z-index: 2;
-    /* feet on the 3px dashed line below */
-    margin-bottom: -3px;
-  }
-
-  /* sub-pages */
-  .bar {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 24px 32px;
-  }
-  .bar .brand:hover .accent {
-    color: var(--accent);
-  }
-
-  @media (max-width: 560px) {
-    .brand {
-      font-size: 52px;
-    }
-    .brand.small {
-      font-size: 34px;
-    }
-    .intro {
-      padding-bottom: 0;
+  @media (max-width: 640px) {
+    .header {
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        'logo actions'
+        'nav nav';
     }
   }
 </style>

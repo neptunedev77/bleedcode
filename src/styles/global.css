@@ -1,66 +1,122 @@
 /* ------------------------------------------------------------------
    bleedcode: design tokens and base styles.
-   Every colour used anywhere lives here. A light theme only needs a
-   `:root[data-theme='light'] { ... }` block that overrides these.
+   Every colour, size and space lives here. A light theme only needs a
+   `:root[data-theme='light'] { ... }` block that overrides the colours.
    ------------------------------------------------------------------ */
 
 :root {
   /* surfaces */
-  --page: #0b0b0d;
-  --card: #121215;
+  --page: #000000;
+  --card: #121212;
   --inner: #17171a;
-  --tile: #1f1f23;
-  --monogram: #2e2e33;
-  --chip: #26262a;
-  --shadow: #050506;
+  --tile: #1d1d21;
 
-  /* blood */
-  --accent: #b8304a; /* cherry red: large text, icons, fills */
-  --blood: #8e1b2b; /* dried blood */
-  --blood-dark: #5c0f1a; /* old blood */
+  /* lines: one thin, quiet border style everywhere */
+  --frame: #2a2a2a; /* the main container's border */
+  --frame-w: 2px;
+  --line: #2a2a2f; /* inner cards and dividers */
+  --line-strong: #6b6670; /* square icon buttons: 3.35:1 on the card */
+  --border-w: 1px;
 
-  /* lines */
-  --border-light: #e9dcd9; /* main card frame */
-  --border: #4a474f; /* inner cards */
-  --border-tile: #5a5660; /* nav tiles */
-  --divider: #2a2a2f;
-
-  /* text */
-  --text: #ece8e3;
-  --text-strong: #f4f0ea;
-  --text-soft: #c3bfba;
-  --muted: #a8a3a0;
+  /* red: the wordmark's "code", the live chip, details and hover */
+  --accent: #b8304a;
   --on-accent: #fff4f5;
-  --link-hover: #ffffff;
+  --accent-soft: rgb(184 48 74 / 0.14); /* hover wash */
 
-  /* type */
-  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
-  --font-pixel: 'Silkscreen', var(--font-mono);
+  /* blood (pixel-art stains) */
+  --blood: #8e1b2b;
+  --blood-dark: #5c0f1a;
+
+  /* text (contrast on --card / --inner / --tile; AA needs 4.5:1) */
+  --text-strong: #f4f0ea; /* 16.5 / 15.8 / 14.8 */
+  --text: #ece8e3; /* 15.3 / 14.7 / 13.8 */
+  --text-soft: #c3bfba; /* 10.2 /  9.8 /  9.2 */
+  --muted: #a8a3a0; /*  7.5 /  7.2 /  6.7 */
+  --dim: #8a8582; /*  5.1 /  4.9: quiet meta text */
+  --ok: #5fd38d; /* 10.0 /  9.5: success feedback */
+  /* --accent is 3.2:1 on --card: large text (>=24px) and non-text only.
+     The live chip (--on-accent on --accent) is 5.5:1. */
+
+  /* pixel icons */
+  --icon: #c3bfba;
+  --icon-2: #6b6670;
+
+  /* type: one font */
+  --font: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  --fs-sm: 14px; /* minimum size for any text */
+  --fs-md: 16px;
+  --fs-lg: 24px;
+  --fs-xl: 40px;
+
+  /* spacing scale: use only these */
+  --s1: 8px;
+  --s2: 16px;
+  --s3: 24px;
+  --s4: 32px;
+  --s5: 48px;
+
+  /* a 4×4 pixel circle: a square with its corners cut */
+  --pixel-dot: polygon(25% 0, 75% 0, 75% 25%, 100% 25%, 100% 75%, 75% 75%, 75% 100%, 25% 100%, 25% 75%, 0 75%, 0 25%, 25% 25%);
+
+  /* motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-fast: 180ms;
 
   /* layout */
   --card-max: 980px;
-  --card-pad-x: 36px;
+  --card-pad: var(--s5);
+  /* soft corners for the big surfaces; buttons, chips and pixels stay square */
+  --radius: 10px;
+  --radius-sm: 6px;
 
   color-scheme: dark;
 }
 
-/* Light theme hook (not in v1). Override the tokens above, e.g.:
+/* Light theme: "Cool Terminal Grey". Same layout and pixel art, other tokens.
+   Contrast on --card: text 16:1, muted 7:1, dim 5.7:1, white on accent 4.9:1. */
 :root[data-theme='light'] {
-  --page: #f1ece6;
-  --card: #fbf8f4;
-  ...
+  --page: #e4e4e7;
+  --card: #f4f4f5;
+  --inner: #eaeaef;
+  --tile: #dfdfe5;
+
+  --frame: #d4d4d8;
+  --line: #d4d4d8;
+  --line-strong: #8e8e96;
+
+  --accent: #d92648;
+  --on-accent: #ffffff;
+  --accent-soft: rgb(217 38 72 / 0.1);
+
+  --text-strong: #18181b;
+  --text: #27272a;
+  --text-soft: #3f3f46;
+  --muted: #52525b;
+  --dim: #5f5f68;
+  --ok: #166534;
+
+  --icon: #3f3f46;
+  --icon-2: #a1a1aa;
+
   color-scheme: light;
 }
-*/
+
+@media (max-width: 560px) {
+  :root {
+    --card-pad: var(--s3);
+  }
+}
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
-  border-radius: 0; /* no rounded corners anywhere */
 }
 
 html {
+  /* keep the scrollbar's space reserved, so the layout never shifts sideways
+     when a page (or a filtered list) gets shorter than the screen */
+  scrollbar-gutter: stable;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -69,31 +125,18 @@ body {
   margin: 0;
   background: var(--page);
   color: var(--text);
-  font-family: var(--font-mono);
-  font-size: 15px;
+  font-family: var(--font);
+  font-size: var(--fs-md);
   font-weight: 500;
-  line-height: 1.55;
+  line-height: 1.5;
   overflow-x: clip;
-}
-
-a {
-  color: var(--text);
-  text-decoration: none;
-}
-
-a:hover {
-  color: var(--link-hover);
-}
-
-:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: 4px;
 }
 
 h1,
 h2,
 h3,
-p {
+p,
+figure {
   margin: 0;
 }
 
@@ -102,57 +145,176 @@ svg {
   display: block;
 }
 
-/* Pixel border: four hard shadows, so the corners come out notched.
-   Tune with --px-w (thickness), --px-c (colour) and --px-drop (extra shadow).
-   The knobs do not inherit, so a nested .px-border never picks up its parent's. */
-@property --px-w {
-  syntax: '*';
-  inherits: false;
-}
-@property --px-c {
-  syntax: '*';
-  inherits: false;
-}
-@property --px-drop {
-  syntax: '*';
-  inherits: false;
+/* Links: one hover and one focus style for the whole site. */
+a {
+  color: inherit;
+  text-decoration: none;
+  transition:
+    color var(--t-fast) var(--ease),
+    background-color var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    text-decoration-color var(--t-fast) var(--ease);
 }
 
-.px-border {
-  --_w: var(--px-w, 3px);
-  --_c: var(--px-c, var(--border));
-  box-shadow:
-    0 calc(var(--_w) * -1) 0 0 var(--_c),
-    0 var(--_w) 0 0 var(--_c),
-    calc(var(--_w) * -1) 0 0 0 var(--_c),
-    var(--_w) 0 0 0 var(--_c),
-    var(--px-drop, 0 0 0 0 transparent);
-}
-
-/* Silkscreen is only for small captions, labels and badges. */
-.pixel {
-  font-family: var(--font-pixel);
-  font-weight: 400;
-}
-
-.dashed-top {
-  border-top: 3px dashed var(--divider);
-}
-
-/* Section label, e.g. "projects" */
-.label {
-  font-family: var(--font-pixel);
-  font-size: 18px;
-  font-weight: 400;
-  color: var(--text-strong);
-}
-
-/* Underlined text link (e.g. "view all 6 →") */
-.link-under {
-  font-size: 13px;
-  font-weight: 600;
+.link {
   color: var(--text);
-  border-bottom: 2px solid var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.link:hover {
+  color: var(--text-strong);
+  text-decoration-color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--text-strong);
+  outline-offset: 3px;
+}
+
+/* Small uppercase label, e.g. section headings. */
+.label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Page transitions: native cross-document view transitions (no JS).
+   The card always fills the viewport, so its frame never jumps; header,
+   card and footer hold still and only the page content fades and rises.
+   Browsers without support just navigate. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-group(page) {
+  animation-duration: 220ms;
+  animation-timing-function: var(--ease);
+}
+/* old and new overlap (no gap with nothing on screen), so there is no flash */
+::view-transition-old(page) {
+  animation: vt-out 160ms ease-out both;
+}
+::view-transition-new(page) {
+  animation: vt-in 220ms var(--ease) both;
+}
+
+@keyframes vt-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* Border trace drawn by site.js on [data-trace] elements: a red line that
+   grows from where the pointer came in until it closes the shape. */
+[data-trace] {
+  position: relative;
+}
+.trace {
+  position: absolute;
+  inset: calc(-1 * var(--border-w));
+  width: calc(100% + 2 * var(--border-w));
+  height: calc(100% + 2 * var(--border-w));
+  overflow: visible;
+  pointer-events: none;
+  z-index: 2;
+}
+.trace rect {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 0 1;
+}
+
+/* Project filters (site.js runs the change inside a view transition).
+   During it, only the project cards animate: the page and frame don't. */
+html.filtering main,
+html.filtering .card {
+  view-transition-name: none !important;
+}
+/* cards that stay glide to their new place; cards that leave or come back
+   just fade with a hint of scale. One thing at a time, quick and quiet. */
+::view-transition-group(.pcard) {
+  animation-duration: 280ms;
+  animation-timing-function: var(--ease);
+}
+::view-transition-old(.pcard):only-child {
+  animation: pcard-out 160ms ease-out both;
+}
+::view-transition-new(.pcard):only-child {
+  animation: pcard-in 220ms var(--ease) 60ms both;
+}
+@keyframes pcard-out {
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+@keyframes pcard-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+/* Theme switch (site.js): for a moment, every colour eases into the new theme */
+@media (prefers-reduced-motion: no-preference) {
+  html.theme-anim,
+  html.theme-anim *:not(.glyph),
+  html.theme-anim *::before,
+  html.theme-anim *::after {
+    transition:
+      background-color 200ms ease,
+      color 200ms ease,
+      border-color 200ms ease,
+      fill 200ms ease,
+      stroke 200ms ease !important;
+  }
+}
+
+/* text-style buttons (e.g. the footer email, which copies on click) */
+button.link {
+  padding: 0;
+  font: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
 }
 
 .visually-hidden {
@@ -165,10 +327,4 @@ svg {
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
-}
-
-@media (max-width: 560px) {
-  :root {
-    --card-pad-x: 18px;
-  }
 }

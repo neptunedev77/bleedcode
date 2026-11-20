@@ -1,0 +1,44 @@
+---
+import { site } from '../site.config';
+import { useStrings } from '../i18n';
+
+const t = useStrings();
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+const links = [
+  { href: '/projects', label: t.nav.projects },
+  { href: '/me', label: t.nav.me },
+  { href: site.github, label: t.nav.github },
+  { href: `mailto:${site.email}`, label: t.nav.contact },
+];
+---
+
+<nav aria-label={t.nav.label}>
+  <ul>
+    {
+      links.map((l) => (
+        <li>
+          <a class="link" href={l.href} aria-current={path === l.href ? 'page' : undefined}>
+            {l.label}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s1) var(--s3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-md);
+  }
+  a[aria-current='page'] {
+    color: var(--text-strong);
+    text-decoration-color: var(--muted);
+  }
+</style>
