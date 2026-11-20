@@ -14,8 +14,7 @@ export const en = {
   home: {
     title: 'solo developer lab in Braga',
     projects: 'Projects',
-    explore: (n: number) => `all ${n} projects`,
-    viewAll: 'all projects →',
+    viewAll: (n: number) => `all projects (${n}) →`,
   },
   filters: {
     legend: 'Filter projects by status',

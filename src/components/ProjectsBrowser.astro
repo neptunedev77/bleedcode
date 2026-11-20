@@ -4,8 +4,8 @@
  * The filters are plain radio buttons and work with CSS alone (:has). When
  * public/js/site.js runs, it takes over ([data-js]) and animates the change
  * with a view transition.
- * `more` adds a quiet "[ . . . ]" link under the grid, to hint that there
- * is more than what is shown.
+ * `viewAll` adds an "all projects (n) →" link next to the heading; the count
+ * tells there is more than what is shown.
  */
 import type { Project } from '../lib/projects';
 import { useStrings } from '../i18n';
@@ -20,14 +20,12 @@ interface Props {
   id?: string;
   /** Show the status filters (default true). */
   filters?: boolean;
-  /** A quiet "[ . . . ]" link to the full list (label is for screen readers). */
-  more?: { href: string; label: string };
   /** "all projects →" link on the right of the heading. */
   viewAll?: { href: string; label: string };
 }
 
 const t = useStrings();
-const { projects, title, as: Heading = 'h2', id = 'projects', filters: showFilters = true, more, viewAll } = Astro.props;
+const { projects, title, as: Heading = 'h2', id = 'projects', filters: showFilters = true, viewAll } = Astro.props;
 const statuses = ['live', 'done', 'wip'] as const;
 const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => ({ value: s, label: t.status[s] }))];
 ---
@@ -72,13 +70,6 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
   <ProjectGrid projects={projects} headingLevel={Heading === 'h1' ? 2 : 3} />
   {showFilters && <p class="empty" data-empty hidden>{t.projects.empty}</p>}
 
-  {
-    more && (
-      <a class="more" href={more.href} aria-label={more.label}>
-        [ . . . ]
-      </a>
-    )
-  }
 </section>
 
 <style>
@@ -164,17 +155,4 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
     display: block !important;
   }
 
-  /* "[ . . . ]": there is more, quietly */
-  .more {
-    align-self: center;
-    margin-top: calc(-1 * var(--s1));
-    padding: 0 var(--s1);
-    font-size: var(--fs-sm);
-    line-height: 1;
-    letter-spacing: 0.05em;
-    color: var(--dim);
-  }
-  .more:hover {
-    color: var(--text-strong);
-  }
 </style>
