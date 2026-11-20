@@ -34,8 +34,8 @@ const repo = !live && p.repo ? repoUrl(p.repo) : undefined;
         <a class="main" href={`/projects/${p.slug}`}>{p.name}</a>
       </Heading>
       <StatusBadge status={p.status} />
-      {live && <ActionLink class="visit" href={live} label="visit" icon="external" ariaLabel={t.projects.openLive(p.name)} external />}
-      {repo && <ActionLink class="visit" href={repo} icon="github" ariaLabel={t.projects.openRepo(p.name)} external />}
+      {live && <ActionLink class="visit" href={live} label="visit" icon="external" ariaLabel={t.projects.openLive(p.name)} external trace={false} />}
+      {repo && <ActionLink class="visit" href={repo} icon="github" ariaLabel={t.projects.openRepo(p.name)} external trace={false} />}
     </div>
     <p class="tagline">{p.tagline}</p>
     <Chips items={p.stack} max={2} />

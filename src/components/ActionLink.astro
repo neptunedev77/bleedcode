@@ -16,16 +16,20 @@ interface Props {
   external?: boolean;
   /** Copy this text on click instead of linking (renders a <button>; see CopyEmail). */
   copy?: string;
+  /** Draw the red border from the pointer's entry point on hover (default true).
+      Off for buttons inside cards, where it competes with the card's own trace. */
+  trace?: boolean;
   class?: string;
 }
 
-const { href, label, icon, ariaLabel, external = false, copy, class: className } = Astro.props;
+const { href, label, icon, ariaLabel, external = false, copy, trace = true, class: className } = Astro.props;
+const traceAttr = trace ? '' : undefined;
 const compact = !label;
 ---
 
 {
   copy ? (
-    <button type="button" class:list={['action', { compact }, className]} aria-label={ariaLabel} data-copy={copy} data-trace>
+    <button type="button" class:list={['action', { compact }, className]} aria-label={ariaLabel} data-copy={copy} data-trace={traceAttr}>
       {label && <span class="text">{label}</span>}
       <span class="icon">
         <Icon name={icon} size={14} />
@@ -38,7 +42,7 @@ const compact = !label;
       aria-label={ariaLabel}
       target={external ? '_blank' : undefined}
       rel={external ? 'noopener' : undefined}
-      data-trace
+      data-trace={traceAttr}
     >
       {label && <span class="text">{label}</span>}
       <span class="icon">
@@ -96,6 +100,8 @@ const compact = !label;
     color: var(--text-strong);
     background: var(--accent-soft);
   }
+  /* no trace (inside cards, or no script): the border simply turns red */
+  .action:not([data-trace]):hover,
   :global(html:not(.has-trace)) .action:hover {
     border-color: var(--accent);
   }
