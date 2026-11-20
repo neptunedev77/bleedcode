@@ -10,7 +10,6 @@ import { useStrings } from '../i18n';
 const t = useStrings();
 const ordered = await getHomeOrder();
 const shown = ordered.slice(0, 2);
-const teaser = ordered.slice(2, 4);
 const [line1, line2] = site.hero.lines;
 ---
 
@@ -41,7 +40,7 @@ const [line1, line2] = site.hero.lines;
     projects={shown}
     title={t.home.projects}
     filters={false}
-    teaser={{ projects: teaser, href: '/projects', label: t.home.explore }}
+    teaser={{ href: '/projects', label: t.home.explore(ordered.length) }}
   />
 </Card>
 

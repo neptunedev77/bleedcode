@@ -12,7 +12,7 @@ export const en = {
   home: {
     title: 'solo developer lab in Braga',
     projects: 'Projects',
-    explore: 'explore all',
+    explore: (n: number) => `explore all ${n}`,
   },
   filters: {
     legend: 'Filter projects by status',

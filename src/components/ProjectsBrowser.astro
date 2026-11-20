@@ -4,8 +4,8 @@
  * The filters are plain radio buttons and work with CSS alone (:has). When
  * public/js/site.js runs, it takes over ([data-js]) and animates the change
  * with a view transition.
- * `teaser` adds a second row that fades out under an "explore all" button,
- * to hint that there is more than what is shown.
+ * `teaser` adds a row of empty card sketches that fade out under an
+ * "explore all" button, to hint that there is more than what is shown.
  */
 import type { Project } from '../lib/projects';
 import { useStrings } from '../i18n';
@@ -21,8 +21,8 @@ interface Props {
   id?: string;
   /** Show the status filters (default true). */
   filters?: boolean;
-  /** A faded second row with an "explore all" button over it. */
-  teaser?: { projects: Project[]; href: string; label: string };
+  /** Faded empty card sketches with an "explore all" button over them. */
+  teaser?: { href: string; label: string };
 }
 
 const t = useStrings();
@@ -65,10 +65,19 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
   {showFilters && <p class="empty" data-empty hidden>{t.projects.empty}</p>}
 
   {
-    teaser && teaser.projects.length > 0 && (
+    teaser && (
       <div class="teaser">
-        <div class="ghost" aria-hidden="true" inert>
-          <ProjectGrid projects={teaser.projects} />
+        <div class="ghost" aria-hidden="true">
+          {[0, 1].map(() => (
+            <div class="sketch">
+              <span class="sk-icon" />
+              <span class="sk-lines">
+                <span class="sk-bar title" />
+                <span class="sk-bar" />
+                <span class="sk-bar short" />
+              </span>
+            </div>
+          ))}
         </div>
         <div class="fade">
           <ActionLink href={teaser.href} label={teaser.label} icon="arrow" class="explore" />
@@ -157,25 +166,55 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
     display: block !important;
   }
 
-  /* teaser: a sliver of the next row that fades out by itself (mask, not an
-     overlay), stripped of buttons and blood, with one clear button on top */
+  /* teaser: two empty card sketches (no text, nothing to read) fading out,
+     with one clear button on top */
   .teaser {
     position: relative;
-    height: 80px;
+    height: 84px;
   }
   .ghost {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
+    gap: var(--s2);
     height: 100%;
     overflow: hidden;
     pointer-events: none;
-    user-select: none;
-    opacity: 0.6;
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.35) 35%, transparent 80%);
-    mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.35) 35%, transparent 80%);
+    -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.7), transparent 85%);
+    mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.7), transparent 85%);
   }
-  .ghost :global(.action),
-  .ghost :global(.blood),
-  .ghost :global(.badge) {
-    display: none;
+  .sketch {
+    display: flex;
+    gap: var(--s2);
+    height: 112px;
+    padding: var(--s2);
+    background: var(--inner);
+    border: var(--border-w) solid var(--line);
+    border-radius: var(--radius-sm);
+  }
+  .sk-icon {
+    flex: none;
+    width: 80px;
+    height: 80px;
+    background: var(--tile);
+  }
+  .sk-lines {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 4px;
+  }
+  .sk-bar {
+    height: 8px;
+    width: 85%;
+    background: var(--tile);
+  }
+  .sk-bar.title {
+    height: 12px;
+    width: 35%;
+  }
+  .sk-bar.short {
+    width: 55%;
   }
   .fade {
     position: absolute;
