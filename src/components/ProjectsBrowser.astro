@@ -4,13 +4,12 @@
  * The filters are plain radio buttons and work with CSS alone (:has). When
  * public/js/site.js runs, it takes over ([data-js]) and animates the change
  * with a view transition.
- * `teaser` adds a row of empty card sketches that fade out under an
- * "explore all" button, to hint that there is more than what is shown.
+ * `more` adds a quiet "[ . . . ]" link under the grid, to hint that there
+ * is more than what is shown.
  */
 import type { Project } from '../lib/projects';
 import { useStrings } from '../i18n';
 import ProjectGrid from './ProjectGrid.astro';
-import ActionLink from './ActionLink.astro';
 
 interface Props {
   projects: Project[];
@@ -21,12 +20,12 @@ interface Props {
   id?: string;
   /** Show the status filters (default true). */
   filters?: boolean;
-  /** Faded empty card sketches with an "explore all" button over them. */
-  teaser?: { href: string; label: string };
+  /** A quiet "[ . . . ]" link to the full list (label is for screen readers). */
+  more?: { href: string; label: string };
 }
 
 const t = useStrings();
-const { projects, title, as: Heading = 'h2', id = 'projects', filters: showFilters = true, teaser } = Astro.props;
+const { projects, title, as: Heading = 'h2', id = 'projects', filters: showFilters = true, more } = Astro.props;
 const statuses = ['live', 'done', 'wip'] as const;
 const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => ({ value: s, label: t.status[s] }))];
 ---
@@ -65,24 +64,10 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
   {showFilters && <p class="empty" data-empty hidden>{t.projects.empty}</p>}
 
   {
-    teaser && (
-      <div class="teaser">
-        <div class="ghost" aria-hidden="true">
-          {[0, 1].map(() => (
-            <div class="sketch">
-              <span class="sk-icon" />
-              <span class="sk-lines">
-                <span class="sk-bar title" />
-                <span class="sk-bar" />
-                <span class="sk-bar short" />
-              </span>
-            </div>
-          ))}
-        </div>
-        <div class="fade">
-          <ActionLink href={teaser.href} label={teaser.label} icon="arrow" class="explore" />
-        </div>
-      </div>
+    more && (
+      <a class="more" href={more.href} aria-label={more.label}>
+        [ . . . ]
+      </a>
     )
   }
 </section>
@@ -166,62 +151,15 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
     display: block !important;
   }
 
-  /* teaser: two empty card sketches (no text, nothing to read) fading out,
-     with one clear button on top */
-  .teaser {
-    position: relative;
-    height: 84px;
+  /* "[ . . . ]": there is more, quietly */
+  .more {
+    align-self: center;
+    padding: 2px var(--s1);
+    font-size: var(--fs-md);
+    letter-spacing: 0.1em;
+    color: var(--dim);
   }
-  .ghost {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
-    gap: var(--s2);
-    height: 100%;
-    overflow: hidden;
-    pointer-events: none;
-    -webkit-mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.7), transparent 85%);
-    mask-image: linear-gradient(to bottom, rgb(0 0 0 / 0.7), transparent 85%);
-  }
-  .sketch {
-    display: flex;
-    gap: var(--s2);
-    height: 112px;
-    padding: var(--s2);
-    background: var(--inner);
-    border: var(--border-w) solid var(--line);
-    border-radius: var(--radius-sm);
-  }
-  .sk-icon {
-    flex: none;
-    width: 80px;
-    height: 80px;
-    background: var(--tile);
-  }
-  .sk-lines {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-top: 4px;
-  }
-  .sk-bar {
-    height: 8px;
-    width: 85%;
-    background: var(--tile);
-  }
-  .sk-bar.title {
-    height: 12px;
-    width: 35%;
-  }
-  .sk-bar.short {
-    width: 55%;
-  }
-  .fade {
-    position: absolute;
-    inset: 0;
-    z-index: 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .more:hover {
+    color: var(--text-strong);
   }
 </style>
