@@ -66,7 +66,7 @@ const hasLocalTitle = education.some((e) => e.localTitle);
         </div>
         <div class="group">
           <h3 class="group-title">{t.me.offline}</h3>
-          <ul class="tags">{offline.map((item) => <li>{item}</li>)}</ul>
+          <ul class="tags short">{offline.map((item) => <li>{item}</li>)}</ul>
         </div>
       </div>
     </section>
@@ -218,20 +218,17 @@ const hasLocalTitle = education.some((e) => e.localTitle);
     color: var(--dim);
   }
 
-  /* interests: two boxes, tags on an even grid so the columns line up */
+  /* interests: two columns, tags on an even grid so they line up */
   .groups {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-    gap: var(--s2);
+    /* the keyboard list is longer, so it gets more room */
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--s3) var(--s4);
   }
   .group {
     display: flex;
     flex-direction: column;
-    gap: var(--s2);
-    padding: var(--s2);
-    background: var(--inner);
-    border: var(--border-w) solid var(--line);
-    border-radius: var(--radius-sm);
+    gap: var(--s1);
   }
   .group-title {
     font-size: var(--fs-sm);
@@ -239,12 +236,16 @@ const hasLocalTitle = education.some((e) => e.localTitle);
     color: var(--muted);
   }
   .tags {
+    --tag-min: 200px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--tag-min)), 1fr));
     gap: var(--s1);
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+  .tags.short {
+    --tag-min: 104px;
   }
   .tags li {
     display: flex;
@@ -263,6 +264,11 @@ const hasLocalTitle = education.some((e) => e.localTitle);
     gap: var(--s2);
   }
 
+  @media (max-width: 720px) {
+    .groups {
+      grid-template-columns: 1fr;
+    }
+  }
   @media (max-width: 560px) {
     .me {
       grid-template-columns: 1fr;

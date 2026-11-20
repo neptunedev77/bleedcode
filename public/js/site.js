@@ -138,8 +138,8 @@
   /* ------------------------------------------------------------------
      3. Project filters ([data-browser]). Takes over from the CSS-only
         version so the change can run inside a view transition: cards that
-        leave switch off like an old CRT, cards that stay glide to their new
-        place, cards that come back switch on (styles in global.css).
+        leave fold shut and fade, cards that stay glide to their new place,
+        cards that come back unfold (styles in global.css).
      ------------------------------------------------------------------ */
   document.querySelectorAll('[data-browser]').forEach((browser) => {
     const items = [...browser.querySelectorAll(':scope > .grid > li')];
@@ -169,8 +169,12 @@
       });
       const root = document.documentElement;
       root.classList.add('filtering');
-      const transition = document.startViewTransition(() => apply(input.value));
+      const value = input.value;
+      const transition = document.startViewTransition(() => apply(value));
+      // whatever happens to the animation (skipped, interrupted), end in the right state
+      transition.updateCallbackDone.catch(() => apply(value));
       transition.finished.finally(() => {
+        apply(browser.querySelector('input[type="radio"]:checked')?.value ?? value);
         items.forEach((li) => {
           li.style.viewTransitionName = '';
           li.style.viewTransitionClass = '';
