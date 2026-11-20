@@ -22,10 +22,12 @@ interface Props {
   filters?: boolean;
   /** A quiet "[ . . . ]" link to the full list (label is for screen readers). */
   more?: { href: string; label: string };
+  /** "all projects →" link on the right of the heading. */
+  viewAll?: { href: string; label: string };
 }
 
 const t = useStrings();
-const { projects, title, as: Heading = 'h2', id = 'projects', filters: showFilters = true, more } = Astro.props;
+const { projects, title, as: Heading = 'h2', id = 'projects', filters: showFilters = true, more, viewAll } = Astro.props;
 const statuses = ['live', 'done', 'wip'] as const;
 const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => ({ value: s, label: t.status[s] }))];
 ---
@@ -58,6 +60,13 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
         </fieldset>
       )
     }
+    {
+      viewAll && (
+        <a class="link view-all" href={viewAll.href}>
+          {viewAll.label}
+        </a>
+      )
+    }
   </div>
 
   <ProjectGrid projects={projects} headingLevel={Heading === 'h1' ? 2 : 3} />
@@ -83,6 +92,10 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
     flex-wrap: wrap;
     align-items: baseline;
     gap: var(--s1) var(--s3);
+  }
+  .view-all {
+    margin-left: auto;
+    font-size: var(--fs-sm);
   }
 
   .filters {
@@ -154,9 +167,11 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
   /* "[ . . . ]": there is more, quietly */
   .more {
     align-self: center;
-    padding: 2px var(--s1);
-    font-size: var(--fs-md);
-    letter-spacing: 0.1em;
+    margin-top: calc(-1 * var(--s1));
+    padding: 0 var(--s1);
+    font-size: var(--fs-sm);
+    line-height: 1;
+    letter-spacing: 0.05em;
     color: var(--dim);
   }
   .more:hover {
