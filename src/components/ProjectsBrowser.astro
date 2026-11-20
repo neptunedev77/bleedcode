@@ -1,73 +1,81 @@
 ---
 /**
- * Heading + quick status filters (all · live · wip) + project grid.
+ * Heading + quick status filters (all · live · done · wip) + project grid.
  * The filters are plain radio buttons and work with CSS alone (:has). When
  * public/js/site.js runs, it takes over ([data-js]) and animates the change
- * with a view transition. Only statuses that exist in the list are offered.
+ * with a view transition.
+ * `teaser` adds a second row that fades out under an "explore all" button,
+ * to hint that there is more than what is shown.
  */
 import type { Project } from '../lib/projects';
 import { useStrings } from '../i18n';
 import ProjectGrid from './ProjectGrid.astro';
+import ActionLink from './ActionLink.astro';
 
 interface Props {
   projects: Project[];
   title: string;
   /** h1 on /projects, h2 on the home page. */
   as?: 'h1' | 'h2';
-  /** Optional "all projects →" link on the right. */
-  more?: { href: string; label: string };
   /** Unique per page, for the radio group. */
   id?: string;
   /** Show the status filters (default true). */
   filters?: boolean;
+  /** A faded second row with an "explore all" button over it. */
+  teaser?: { projects: Project[]; href: string; label: string };
 }
 
 const t = useStrings();
-const { projects, title, as: Heading = 'h2', more, id = 'projects', filters: showFilters = true } = Astro.props;
-const order = ['live', 'wip', 'archived'] as const;
-const statuses = order.filter((s) => projects.some((p) => p.data.status === s));
+const { projects, title, as: Heading = 'h2', id = 'projects', filters: showFilters = true, teaser } = Astro.props;
+const statuses = ['live', 'done', 'wip'] as const;
 const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => ({ value: s, label: t.status[s] }))];
 ---
 
 <section class="browser" aria-labelledby={`${id}-title`} data-browser>
   <div class="head">
-    <div class="title-row">
-      <Heading id={`${id}-title`} class="label">{title}</Heading>
-      {
-        showFilters && statuses.length > 1 && (
-          <fieldset class="filters">
-            <legend class="visually-hidden">{t.filters.legend}</legend>
-            {filters.map((f, i) => (
-              <>
-                {i > 0 && (
-                  <span class="sep" aria-hidden="true">
-                    ·
-                  </span>
-                )}
-                <input
-                  class="visually-hidden"
-                  type="radio"
-                  name={`${id}-filter`}
-                  id={`${id}-f-${f.value}`}
-                  value={f.value}
-                  checked={f.value === 'all'}
-                />
-                <label for={`${id}-f-${f.value}`}>{f.label}</label>
-              </>
-            ))}
-          </fieldset>
-        )
-      }
-    </div>
+    <Heading id={`${id}-title`} class="label">{title}</Heading>
     {
-      more && (
-        <a class="link more" href={more.href}>
-          {more.label}
-        </a>
+      showFilters && (
+        <fieldset class="filters">
+          <legend class="visually-hidden">{t.filters.legend}</legend>
+          {filters.map((f, i) => (
+            <>
+              {i > 0 && (
+                <span class="sep" aria-hidden="true">
+                  ·
+                </span>
+              )}
+              <input
+                class="visually-hidden"
+                type="radio"
+                name={`${id}-filter`}
+                id={`${id}-f-${f.value}`}
+                value={f.value}
+                checked={f.value === 'all'}
+              />
+              <label for={`${id}-f-${f.value}`}>{f.label}</label>
+            </>
+          ))}
+        </fieldset>
       )
     }
   </div>
+
   <ProjectGrid projects={projects} headingLevel={Heading === 'h1' ? 2 : 3} />
+  {showFilters && <p class="empty" data-empty hidden>{t.projects.empty}</p>}
+
+  {
+    teaser && teaser.projects.length > 0 && (
+      <div class="teaser">
+        <div class="ghost" aria-hidden="true" inert>
+          <ProjectGrid projects={teaser.projects} />
+        </div>
+        <div class="fade">
+          <ActionLink href={teaser.href} label={teaser.label} icon="arrow" class="explore" />
+        </div>
+      </div>
+    )
+  }
 </section>
 
 <style>
@@ -79,18 +87,8 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
   .head {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--s1) var(--s2);
-  }
-  .title-row {
-    display: flex;
-    flex-wrap: wrap;
     align-items: baseline;
     gap: var(--s1) var(--s3);
-  }
-  .more {
-    font-size: var(--fs-sm);
   }
 
   .filters {
@@ -138,10 +136,45 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
     outline-offset: 3px;
   }
 
+  .empty {
+    padding: var(--s4) var(--s3);
+    font-size: var(--fs-sm);
+    text-align: center;
+    color: var(--dim);
+    border: var(--border-w) dashed var(--line-strong);
+    border-radius: var(--radius-sm);
+  }
+
   /* the filtering itself, when site.js is not running */
   .browser:not([data-js]):has(input[value='live']:checked) :global(.grid > li:not([data-status='live'])),
-  .browser:not([data-js]):has(input[value='wip']:checked) :global(.grid > li:not([data-status='wip'])),
-  .browser:not([data-js]):has(input[value='archived']:checked) :global(.grid > li:not([data-status='archived'])) {
+  .browser:not([data-js]):has(input[value='done']:checked) :global(.grid > li:not([data-status='done'])),
+  .browser:not([data-js]):has(input[value='wip']:checked) :global(.grid > li:not([data-status='wip'])) {
     display: none;
+  }
+  .browser:not([data-js]):has(input[value='live']:checked):not(:has(.grid > li[data-status='live'])) .empty,
+  .browser:not([data-js]):has(input[value='done']:checked):not(:has(.grid > li[data-status='done'])) .empty,
+  .browser:not([data-js]):has(input[value='wip']:checked):not(:has(.grid > li[data-status='wip'])) .empty {
+    display: block !important;
+  }
+
+  /* teaser: a sliver of the next row, fading into the card, with a button on top */
+  .teaser {
+    position: relative;
+    height: 88px;
+    margin-top: calc(-1 * var(--s1));
+  }
+  .ghost {
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+  }
+  .fade {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, rgb(18 18 21 / 0.6), var(--card) 72%);
   }
 </style>

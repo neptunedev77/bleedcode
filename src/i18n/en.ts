@@ -7,11 +7,12 @@ export const en = {
     me: '/me',
     logo: 'bleedcode, home',
     github: 'GitHub profile',
-    contact: 'Copy email address',
+    contact: 'Copy email address to clipboard',
   },
   home: {
+    title: 'solo developer lab in Braga',
     projects: 'Projects',
-    viewAll: 'all projects →',
+    explore: 'explore all',
   },
   filters: {
     legend: 'Filter projects by status',
@@ -19,6 +20,8 @@ export const en = {
   },
   projects: {
     title: 'Projects',
+    tabTitle: '/projects',
+    empty: 'nothing here yet',
     description: 'Everything built under bleedcode: live apps and work in progress.',
     openLive: (name: string) => `Visit ${name} (opens in a new tab)`,
     openRepo: (name: string) => `Source code of ${name} on GitHub (opens in a new tab)`,
@@ -34,7 +37,7 @@ export const en = {
     noScreenshots: 'no screenshots yet',
     kind: { personal: 'personal project', academic: 'academic project' },
   },
-  status: { live: 'live', wip: 'wip', archived: 'archived' },
+  status: { live: 'live', done: 'done', wip: 'wip' },
   me: {
     title: '/me',
     description: 'About the developer behind bleedcode: background, education and interests.',
@@ -45,6 +48,7 @@ export const en = {
     focus: 'at the keyboard',
     offline: 'away from it',
     contact: 'Contact',
+    localTitle: 'Locally titled as Informatics Engineering',
   },
   notFound: {
     title: '404',
@@ -55,8 +59,8 @@ export const en = {
     updated: 'last updated',
   },
   copy: {
+    label: 'copy to clipboard',
     done: 'copied to clipboard ✓',
-    announce: 'Email address copied to clipboard',
   },
   mascot: {
     alt: 'The bleedcode cat: a black pixel-art cat with a red scarf',

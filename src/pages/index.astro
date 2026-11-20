@@ -4,11 +4,13 @@ import ProjectsBrowser from '../components/ProjectsBrowser.astro';
 import Mascot from '../components/Mascot.astro';
 import Blood from '../components/Blood.astro';
 import { site } from '../site.config';
-import { getHomeProjects } from '../lib/projects';
+import { getHomeOrder } from '../lib/projects';
 import { useStrings } from '../i18n';
 
 const t = useStrings();
-const projects = await getHomeProjects(2);
+const ordered = await getHomeOrder();
+const shown = ordered.slice(0, 2);
+const teaser = ordered.slice(2, 4);
 const [line1, line2] = site.hero.lines;
 ---
 
@@ -36,10 +38,10 @@ const [line1, line2] = site.hero.lines;
   </section>
 
   <ProjectsBrowser
-    projects={projects}
+    projects={shown}
     title={t.home.projects}
     filters={false}
-    more={{ href: '/projects', label: t.home.viewAll }}
+    teaser={{ projects: teaser, href: '/projects', label: t.home.explore }}
   />
 </Card>
 
@@ -102,11 +104,9 @@ const [line1, line2] = site.hero.lines;
     image-rendering: pixelated;
   }
   .meta {
-    font-size: var(--fs-sm);
+    font-size: var(--fs-md);
     font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    line-height: 1.7;
+    line-height: 1.6;
     color: var(--muted);
   }
   .perch {

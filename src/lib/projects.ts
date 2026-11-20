@@ -14,19 +14,17 @@ export async function getProjects(): Promise<Project[]> {
 }
 
 /**
- * The few projects shown on the home page: live ones first, then featured,
+ * Projects in home-page order: live ones first, then featured,
  * then by `order` (lower = more recent / more important).
  */
-export async function getHomeProjects(limit = 2): Promise<Project[]> {
+export async function getHomeOrder(): Promise<Project[]> {
   const all = await getProjects();
-  return [...all]
-    .sort(
-      (a, b) =>
-        Number(b.data.status === 'live') - Number(a.data.status === 'live') ||
-        Number(b.data.featured) - Number(a.data.featured) ||
-        a.data.order - b.data.order,
-    )
-    .slice(0, limit);
+  return [...all].sort(
+    (a, b) =>
+      Number(b.data.status === 'live') - Number(a.data.status === 'live') ||
+      Number(b.data.featured) - Number(a.data.featured) ||
+      a.data.order - b.data.order,
+  );
 }
 
 export function repoUrl(repo: string): string {
