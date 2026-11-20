@@ -157,24 +157,32 @@ const filters = [{ value: 'all', label: t.filters.all }, ...statuses.map((s) => 
     display: block !important;
   }
 
-  /* teaser: a sliver of the next row, fading into the card, with a button on top */
+  /* teaser: a sliver of the next row that fades out by itself (mask, not an
+     overlay), stripped of buttons and blood, with one clear button on top */
   .teaser {
     position: relative;
-    height: 88px;
-    margin-top: calc(-1 * var(--s1));
+    height: 80px;
   }
   .ghost {
     height: 100%;
     overflow: hidden;
     pointer-events: none;
     user-select: none;
+    opacity: 0.6;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.35) 35%, transparent 80%);
+    mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.35) 35%, transparent 80%);
+  }
+  .ghost :global(.action),
+  .ghost :global(.blood),
+  .ghost :global(.badge) {
+    display: none;
   }
   .fade {
     position: absolute;
     inset: 0;
+    z-index: 3;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(to bottom, rgb(18 18 21 / 0.6), var(--card) 72%);
   }
 </style>
