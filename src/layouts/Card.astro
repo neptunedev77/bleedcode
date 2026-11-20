@@ -34,6 +34,8 @@ const ogImage = new URL('/og.png', base).href;
 <html lang={defaultLocale}>
   <head>
     <meta charset="utf-8" />
+    <!-- saved theme, applied before first paint -->
+    <script is:inline src="/js/theme.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
@@ -68,8 +70,8 @@ const ogImage = new URL('/og.png', base).href;
   <body>
     <div class="page">
       <div class="card">
-        <Blood kind="corner" scale={5} scaleSmall={3} top="0" left="0" />
-        <Blood kind="smear" scale={4} scaleSmall={3} bottom="0" right="14%" />
+        <Blood kind="corner" scale={5} scaleSmall={3} top="calc(-1 * var(--frame-w))" left="calc(-1 * var(--frame-w))" />
+        <Blood kind="smear" scale={4} scaleSmall={3} bottom="calc(-1 * var(--frame-w))" right="14%" />
         <SiteHeader />
         <main id="main">
           <slot />
@@ -96,11 +98,11 @@ const ogImage = new URL('/og.png', base).href;
     display: flex;
     flex-direction: column;
     gap: var(--s4);
-    /* a square 2px frame; the stains sit flush inside it
-       (overflow hidden keeps every pixel within the border) */
+    /* a square 2px frame. The stains sit on top of the border, aligned to its
+       outer edge, so the line runs straight into the blood (no step, and no
+       pixel outside the frame) */
     background: var(--card);
     border: var(--frame-w) solid var(--frame);
-    overflow: hidden;
     view-transition-name: card;
   }
   main {
