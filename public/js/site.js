@@ -4,13 +4,22 @@
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   /* ------------------------------------------------------------------
-     1. Click-to-copy email ([data-copy]). Swaps the text in [data-copy-text]
-        to a "copied" message for 2s and announces it; icon-only links get a
-        CSS tag instead. Falls back to the mailto: link if nothing can copy.
+     1. Click-to-copy email (<button data-copy="address">). Shows a toast at
+        the bottom of the screen; if nothing can copy, the toast shows the
+        address instead so it can be copied by hand.
      ------------------------------------------------------------------ */
-  const status = document.querySelector('[data-copy-status]');
-  const doneText = status?.dataset.done ?? 'copied ✓';
-  const announceText = status?.dataset.announce ?? 'Copied';
+  const toast = document.querySelector('[data-toast]');
+  let toastTimer;
+  const showToast = (text, isError) => {
+    if (!toast) return;
+    toast.textContent = text;
+    toast.classList.toggle('error', Boolean(isError));
+    toast.classList.remove('show');
+    void toast.offsetWidth; // restart the rise-in if it is already showing
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), isError ? 4000 : 2000);
+  };
 
   const legacyCopy = (text) => {
     const area = document.createElement('textarea');
@@ -30,10 +39,10 @@
   };
 
   document.addEventListener('click', async (event) => {
-    const link = event.target instanceof Element ? event.target.closest('[data-copy]') : null;
-    if (!link) return;
+    const button = event.target instanceof Element ? event.target.closest('[data-copy]') : null;
+    if (!button) return;
     event.preventDefault();
-    const text = link.getAttribute('data-copy');
+    const text = button.getAttribute('data-copy');
     let ok = false;
     try {
       await navigator.clipboard.writeText(text);
@@ -41,21 +50,8 @@
     } catch {
       ok = legacyCopy(text);
     }
-    if (!ok) {
-      window.location.href = link.getAttribute('href');
-      return;
-    }
-    const label = link.querySelector('[data-copy-text]');
-    if (label && !label.dataset.original) label.dataset.original = label.textContent;
-    if (label) label.textContent = doneText;
-    link.classList.add('copied');
-    if (status) status.textContent = announceText;
-    clearTimeout(link._copyTimer);
-    link._copyTimer = setTimeout(() => {
-      if (label) label.textContent = label.dataset.original;
-      link.classList.remove('copied');
-      if (status) status.textContent = '';
-    }, 2000);
+    if (ok) showToast(toast?.dataset.done ?? 'copied ✓', false);
+    else showToast(text, true);
   });
 
   /* ------------------------------------------------------------------
@@ -93,7 +89,10 @@
     else if (min === d.right) p = w + py;
     else if (min === d.bottom) p = w + h + (w - px);
     else p = 2 * w + h + (h - py);
-    return { p, P: 2 * (w + h), w, h };
+    // rounded boxes: follow the same corner radius (perimeter loses (8 - 2π)·r)
+    const radius = Math.max(parseFloat(getComputedStyle(el).borderTopLeftRadius) - STROKE / 2, 0) || 0;
+    const P = 2 * (w + h) - (8 - 2 * Math.PI) * radius;
+    return { p: (p * P) / (2 * (w + h)), P, w, h, radius };
   };
 
   const frames = (p, P, grow) => {
@@ -106,11 +105,13 @@
     if (reduceMotion.matches || event.pointerType === 'touch') return;
     const el = event.currentTarget;
     const t = traceFor(el);
-    const { p, P, w, h } = along(el, event.clientX, event.clientY);
+    const { p, P, w, h, radius } = along(el, event.clientX, event.clientY);
     t.rect.setAttribute('x', String(STROKE / 2));
     t.rect.setAttribute('y', String(STROKE / 2));
     t.rect.setAttribute('width', String(w));
     t.rect.setAttribute('height', String(h));
+    t.rect.setAttribute('rx', String(radius));
+    t.rect.setAttribute('ry', String(radius));
     t.anim?.cancel();
     t.anim = t.rect.animate(frames(p, P, true), { duration: 340, easing: ease, fill: 'forwards' });
   };
@@ -137,17 +138,21 @@
   /* ------------------------------------------------------------------
      3. Project filters ([data-browser]). Takes over from the CSS-only
         version so the change can run inside a view transition: cards that
-        leave fade and shrink, cards that stay glide to their new place,
-        cards that come back rise in.
+        leave switch off like an old CRT, cards that stay glide to their new
+        place, cards that come back switch on (styles in global.css).
      ------------------------------------------------------------------ */
   document.querySelectorAll('[data-browser]').forEach((browser) => {
-    const items = [...browser.querySelectorAll('.grid > li')];
+    const items = [...browser.querySelectorAll(':scope > .grid > li')];
     if (!items.length) return;
     browser.dataset.js = '';
+    const empty = browser.querySelector('[data-empty]');
     const apply = (value) => {
+      let shown = 0;
       items.forEach((li) => {
         li.hidden = value !== 'all' && li.dataset.status !== value;
+        if (!li.hidden) shown += 1;
       });
+      if (empty) empty.hidden = shown > 0;
     };
     apply(browser.querySelector('input[type="radio"]:checked')?.value ?? 'all');
 

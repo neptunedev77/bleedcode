@@ -1,20 +1,56 @@
 ---
 /**
- * Live region for the click-to-copy feedback, plus the strings it uses.
+ * The toast for click-to-copy: a small box centred at the bottom of the screen
+ * that rises in, says "copied to clipboard ✓" and fades away. It is also the
+ * live region that announces the copy to screen readers.
  * The behaviour lives in public/js/site.js (external, so the CSP can stay
- * `script-src 'self'`). Mark a link with `data-copy="address"` to enable it.
+ * `script-src 'self'`). Mark a <button> with `data-copy="address"` to use it.
  */
 import { useStrings } from '../i18n';
 
 const t = useStrings();
 ---
 
-<div
-  class="visually-hidden"
-  role="status"
-  aria-live="polite"
-  data-copy-status
-  data-done={t.copy.done}
-  data-announce={t.copy.announce}
->
+<div class="toast" role="status" aria-live="polite" data-toast data-done={t.copy.done}>
 </div>
+
+<style>
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: var(--s3);
+    z-index: 50;
+    padding: var(--s1) var(--s2);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+    color: var(--ok);
+    background: var(--inner);
+    border: var(--border-w) solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.45);
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, 12px);
+    transition:
+      opacity 200ms var(--ease),
+      transform 260ms var(--ease);
+    view-transition-name: toast;
+  }
+  .toast:empty {
+    visibility: hidden;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  .toast.error {
+    color: var(--text-strong);
+    border-color: var(--accent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .toast {
+      transform: translate(-50%, 0);
+    }
+  }
+</style>

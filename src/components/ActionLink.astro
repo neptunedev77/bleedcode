@@ -6,14 +6,15 @@
 import Icon from './Icon.astro';
 
 interface Props {
-  href: string;
+  /** Link target; not needed when `copy` is set. */
+  href?: string;
   /** Visible text; omit for a compact icon-only button (then ariaLabel is required). */
   label?: string;
-  icon: 'external' | 'mail' | 'github';
+  icon: 'external' | 'mail' | 'github' | 'arrow';
   /** Accessible name when the visible label needs more context (must start with the label). */
   ariaLabel?: string;
   external?: boolean;
-  /** Text to copy to the clipboard on click instead of following the link (see CopyEmail). */
+  /** Copy this text on click instead of linking (renders a <button>; see CopyEmail). */
   copy?: string;
   class?: string;
 }
@@ -22,21 +23,35 @@ const { href, label, icon, ariaLabel, external = false, copy, class: className }
 const compact = !label;
 ---
 
-<a
-  class:list={['action', { compact }, className]}
-  href={href}
-  aria-label={ariaLabel}
-  target={external ? '_blank' : undefined}
-  rel={external ? 'noopener' : undefined}
-  data-copy={copy}
-  data-trace
->
-  {label && <span class="text" data-copy-text={copy ? '' : undefined}>{label}</span>}
-  <span class="icon"><Icon name={icon} size={14} /></span>
-</a>
+{
+  copy ? (
+    <button type="button" class:list={['action', { compact }, className]} aria-label={ariaLabel} data-copy={copy} data-trace>
+      {label && <span class="text">{label}</span>}
+      <span class="icon">
+        <Icon name={icon} size={14} />
+      </span>
+    </button>
+  ) : (
+    <a
+      class:list={['action', { compact }, className]}
+      href={href}
+      aria-label={ariaLabel}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener' : undefined}
+      data-trace
+    >
+      {label && <span class="text">{label}</span>}
+      <span class="icon">
+        <Icon name={icon} size={14} />
+      </span>
+    </a>
+  )
+}
 
 <style>
   .action {
+    font: inherit;
+    cursor: pointer;
     position: relative;
     z-index: 1;
     display: inline-flex;

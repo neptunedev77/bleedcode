@@ -7,9 +7,9 @@ const built = new Date();
 ---
 
 <footer class="footer">
-  <a class="link copy" href={`mailto:${site.email}`} data-copy={site.email}>
-    <span data-copy-text>{site.email}</span>
-  </a>
+  <button type="button" class="link copy" data-copy={site.email} aria-label={`${site.email}: ${t.copy.label}`}>
+    {site.email}
+  </button>
   <p class="updated">
     <span class="pulse" aria-hidden="true"></span>
     {t.footer.updated}{' '}<time datetime={built.toISOString().slice(0, 10)}>{formatDate(built)}</time>

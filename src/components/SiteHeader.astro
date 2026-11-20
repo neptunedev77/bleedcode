@@ -46,9 +46,9 @@ const links = [
     <a class="icon-btn" href={site.github} aria-label={t.nav.github} data-trace>
       <Icon name="github" />
     </a>
-    <a class="icon-btn" href={`mailto:${site.email}`} aria-label={t.nav.contact} data-copy={site.email} data-trace>
+    <button type="button" class="icon-btn" aria-label={t.nav.contact} data-copy={site.email} data-trace>
       <Icon name="mail" />
-    </a>
+    </button>
   </div>
 </header>
 
@@ -104,6 +104,10 @@ const links = [
     gap: var(--s1);
   }
   .icon-btn {
+    padding: 0;
+    font: inherit;
+    background: none;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
