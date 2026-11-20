@@ -68,7 +68,7 @@ const ogImage = new URL('/og.png', base).href;
   <body>
     <div class="page">
       <div class="card">
-        <Blood kind="corner" scale={5} scaleSmall={3} top="0" left="0" radius="calc(var(--card-radius) - var(--border-w))" />
+        <Blood kind="corner" scale={5} scaleSmall={3} top="0" left="0" />
         <Blood kind="smear" scale={4} scaleSmall={3} bottom="0" right="14%" />
         <SiteHeader />
         <main id="main">
@@ -96,11 +96,10 @@ const ogImage = new URL('/og.png', base).href;
     display: flex;
     flex-direction: column;
     gap: var(--s4);
-    /* a quiet 1px frame with a slight radius; the stains sit flush inside it
+    /* a square 2px frame; the stains sit flush inside it
        (overflow hidden keeps every pixel within the border) */
     background: var(--card);
-    border: var(--border-w) solid var(--frame);
-    border-radius: var(--card-radius);
+    border: var(--frame-w) solid var(--frame);
     overflow: hidden;
     view-transition-name: card;
   }
