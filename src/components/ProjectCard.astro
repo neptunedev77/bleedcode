@@ -26,7 +26,7 @@ const repo = !live && p.repo ? repoUrl(p.repo) : undefined;
 ---
 
 <article class:list={['card', { live }]} data-trace>
-  {live && <Blood kind="corner" scale={3} bottom="-1px" right="-1px" flip="xy" />}
+  {live && <Blood kind="corner" scale={3} bottom="-1px" right="-1px" flip="xy" radius="var(--radius-sm)" />}
   <ProjectIcon icon={p.icon} logo={p.logo} />
   <div class="body">
     <div class="title">
@@ -52,6 +52,7 @@ const repo = !live && p.repo ? repoUrl(p.repo) : undefined;
     padding: var(--s2);
     background: var(--inner);
     border: var(--border-w) solid var(--line);
+    border-radius: var(--radius-sm);
     transition:
       border-color var(--t-fast) var(--ease),
       background-color var(--t-fast) var(--ease);

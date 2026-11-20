@@ -212,6 +212,7 @@ const { Content } = await render(project);
     font-size: var(--fs-sm);
     color: var(--dim);
     border: var(--border-w) dashed var(--line-strong);
+    border-radius: var(--radius-sm);
   }
   .shots {
     display: grid;
@@ -221,6 +222,8 @@ const { Content } = await render(project);
   figure {
     background: var(--inner);
     border: var(--border-w) solid var(--line);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
   }
   figure img {
     width: 100%;

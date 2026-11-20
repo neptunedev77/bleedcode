@@ -61,10 +61,12 @@ interface Props {
   bottom?: string;
   left?: string;
   flip?: 'x' | 'y' | 'xy';
+  /** Round the shape's top-left corner (before flipping) to match a rounded box. */
+  radius?: string;
   class?: string;
 }
 
-const { kind, scale = 3, scaleSmall = scale, top, right, bottom, left, flip, class: className } = Astro.props;
+const { kind, scale = 3, scaleSmall = scale, top, right, bottom, left, flip, radius, class: className } = Astro.props;
 const shape: Shape = shapes[kind];
 const path = (runs: readonly Run[] = []) => runs.map(([x, y, w]) => `M${x} ${y}h${w}v1h-${w}z`).join('');
 const transform = flip === 'x' ? 'scaleX(-1)' : flip === 'y' ? 'scaleY(-1)' : flip === 'xy' ? 'scale(-1)' : undefined;
@@ -84,6 +86,8 @@ const transform = flip === 'x' ? 'scaleX(-1)' : flip === 'y' ? 'scaleY(-1)' : fl
     bottom,
     left,
     transform,
+    borderTopLeftRadius: radius,
+    overflow: radius ? 'hidden' : undefined,
     '--bw': `${shape.w * scale}px`,
     '--bh': `${shape.h * scale}px`,
     '--bw-sm': `${shape.w * scaleSmall}px`,

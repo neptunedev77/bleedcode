@@ -64,6 +64,9 @@
   /* layout */
   --card-max: 980px;
   --card-pad: var(--s4);
+  /* soft corners for the big surfaces; buttons, chips and pixels stay square */
+  --radius: 10px;
+  --radius-sm: 6px;
 
   color-scheme: dark;
 }
@@ -82,10 +85,12 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  border-radius: 0; /* no rounded corners anywhere */
 }
 
 html {
+  /* keep the scrollbar's space reserved, so the layout never shifts sideways
+     when a page (or a filtered list) gets shorter than the screen */
+  scrollbar-gutter: stable;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -238,53 +243,62 @@ html.filtering .card {
   view-transition-name: none !important;
 }
 ::view-transition-group(.pcard) {
-  animation-duration: 380ms;
+  animation-duration: 420ms;
   animation-timing-function: var(--ease);
 }
+/* leaving: a CRT switch-off. The card collapses into a thin blood-red line,
+   then the line shrinks to a point and goes out. */
 ::view-transition-old(.pcard):only-child {
-  animation: pcard-out 200ms var(--ease) both;
+  animation: pcard-off 300ms cubic-bezier(0.55, 0, 0.3, 1) both;
+  transform-origin: 50% 50%;
 }
+/* coming back: the reverse, a line that opens sideways, then the picture */
 ::view-transition-new(.pcard):only-child {
-  animation: pcard-in 360ms var(--ease) 90ms both;
+  animation: pcard-on 420ms var(--ease) 160ms both;
+  transform-origin: 50% 50%;
 }
-@keyframes pcard-out {
-  to {
+@keyframes pcard-off {
+  0% {
+    transform: scale(1, 1);
+    filter: none;
+    opacity: 1;
+  }
+  55% {
+    transform: scale(1, 0.02);
+    filter: grayscale(1) sepia(1) saturate(14) hue-rotate(-60deg) brightness(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0, 0.02);
+    filter: grayscale(1) sepia(1) saturate(14) hue-rotate(-60deg) brightness(1.45);
     opacity: 0;
-    transform: scale(0.94);
-    filter: blur(3px);
   }
 }
-@keyframes pcard-in {
-  from {
+@keyframes pcard-on {
+  0% {
+    transform: scale(0, 0.02);
+    filter: grayscale(1) sepia(1) saturate(14) hue-rotate(-60deg) brightness(1.45);
     opacity: 0;
-    transform: translateY(12px) scale(0.97);
-    filter: blur(3px);
+  }
+  35% {
+    transform: scale(1, 0.02);
+    filter: grayscale(1) sepia(1) saturate(14) hue-rotate(-60deg) brightness(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1, 1);
+    filter: none;
+    opacity: 1;
   }
 }
 
-/* click-to-copy feedback (see CopyEmail.astro) */
-[data-copy] {
-  position: relative;
-}
-a[data-copy].copied,
-a[data-copy].copied:hover {
-  color: var(--ok);
-  text-decoration-color: var(--ok);
-  border-color: var(--ok);
-}
-/* icon-only links have no text to swap, so they get a small tag */
-[data-copy].copied:not(:has([data-copy-text]))::after {
-  content: 'copied ✓';
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  padding: 2px var(--s1);
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  white-space: nowrap;
-  color: var(--ok);
-  background: var(--inner);
-  border: var(--border-w) solid var(--ok);
+/* text-style buttons (e.g. the footer email, which copies on click) */
+button.link {
+  padding: 0;
+  font: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
 }
 
 .visually-hidden {
